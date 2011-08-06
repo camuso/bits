@@ -48,6 +48,7 @@ private	slots:
 	void mapped_hexedit(int);
 	void bbRadioClick(int);
 	void shiftRadioClick(int);
+	void bitSizeClick(int);
 
 private:
 	Ui::bits *ui;

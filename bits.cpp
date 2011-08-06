@@ -185,6 +185,45 @@ void bits::shiftRadioClick(int)
 
 /*/////////////////////////////////////////////////////////////////////////////
 //
+// bits::bitSizeClick
+//
+// The integer that's returned is the index of the clicked radio button int
+// the QList that contains it and the other QRadioButtons in this group.
+// That index conveniently maps to the bitfield_t defined in bitfield.h
+// The bitfield width will control the number of BitButtons presented to
+// the user interface and the width of the fields in the HexEdit boxes.
+//
+// On click, of any button in this group, we must do the following.
+// . In a loop, cycle through all the HexEdit boxes and call the
+//   hexBitField->setBitField routine.
+//.  Call updateHexEdit for each of the boxes.
+//
+*/
+void bits::bitSizeClick(int bitSize)
+{
+	// Even thoug we know that the integer returned maps directly to
+	// the correspondig value in the bitfield_t enumeration (bitfield.h)
+	// the right thing to do is to parse the value and map it explicitly.
+	// Paranoia is good in this business.
+	//
+	bitfield_t bf;
+	switch (bitSize)
+	{
+	case 0: bf = bit_8; break;
+	case 1: bf = bit_16; break;
+	case 2: bf = bit_32; break;
+	case 3: bf = bit_64; break;
+	default: bf = bit_32; break;
+	}
+
+	for (int index = 0; index < hex_array_size; index++)
+	{
+		ui->hexedit[index]->hexBitField->setBitField(bf);
+	}
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+//
 // bits::updateBits(index)
 //
 // Obtain the new value in the HexEdit box indicated by the hexIndex argument.
@@ -563,6 +602,10 @@ void bits::init_heArray()
 */
 void bits::init_bitSizes()
 {
+	// Initialize a Twidget class to convey all the information needed
+	// by the ControlGroup to create the button control group.
+	// See controlgroup.h
+	//
 	const char *objText[] = {"8-bit", "16-bit", "32-bit", "64-bit"};
 	Twidget tw;
 	tw.objCount = 4;
@@ -580,9 +623,15 @@ void bits::init_bitSizes()
 	// putting it in the bits.ui.h, where the ui is declared and
 	// initialized. Just a little variety for spice. :)
 	//
+	// . Create the new ControlGroup for bit width
+	// . Set the 32-bit width as the default, which is widget[2] in
+	//   the QList of button objects, widgetList.
+	// . Connect the output of the QSignalMapper that was created by
+	//   the ControlGroup class to the slot (handler) in this class.
+	//
 	pBitSizes = new ControlGroup <QRadioButton>(&tw, ui->centralWidget);
 	pBitSizes->widgetList[2]->setChecked(true); // 32-bit button
-
+	connect(tw.mapper, SIGNAL(mapped(int)), this, SLOT(bitSizeClici(int)));
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
