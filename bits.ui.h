@@ -102,8 +102,7 @@ public:
 	QButtonGroup *bbConnectGroup;
 	QButtonGroup *shiftConnectGroup;
 
-	////ControlGroup <QRadioButton> *pBitSizes;
-	ControlGroup *pBitSizes;
+	ControlGroup <QRadioButton> *pBitSizes;
 
 	QMenuBar *menuBar;
 	QToolBar *mainToolBar;

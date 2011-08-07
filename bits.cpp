@@ -330,11 +330,6 @@ void bits::sendMessage(QString& line, int level)
 	cursor.movePosition(QTextCursor::End);
 	ui->messages->setTextCursor(cursor);
 	//ui->messages->append(line);
-
-	Twidget* tw = ui->pBitSizes->getTwidget();
-	QButtonGroup* buttonGroup = tw->buttonGroup;
-	int id = buttonGroup->checkedId();
-	bool isCheckable = ui->pBitSizes->widgetList[id]->isCheckable();
 }
 
 /*//////////////////////////////////////////////////////////////////////////////
@@ -632,10 +627,10 @@ void bits::init_bitSizes()
 	//   the QList of button objects, widgetList.
 	// . Connect the output of the QSignalMapper that was created by
 	//   the ControlGroup class to the slot (handler) in this class.
+	// . Set the 32-bit button as the default.
 	//
-	//// ui->pBitSizes = new ControlGroup <QRadioButton>(tw, ui->centralWidget);
-	ui->pBitSizes = new ControlGroup (tw, ui->centralWidget);
-	ui->pBitSizes->widgetList[2]->setChecked(true); // 32-bit button
+	ui->pBitSizes = new ControlGroup <QRadioButton>(tw, ui->centralWidget);
+	ui->pBitSizes->widgetList[2]->setChecked(true); // 32-bit button default
 	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
 			this, SLOT(bitSizeClick(int)));
 }

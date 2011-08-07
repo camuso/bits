@@ -60,7 +60,6 @@ typedef void (*pSlot_t)(int);
 */
 class Twidget
 {
-	Q_GADGET
 public:
 	// These fields are must be initialized by the caller to ControlGroup
 	//
@@ -84,31 +83,10 @@ public:
 								// : together as a group.
 };
 
-class ControlGroup : public QWidget
-{
-	Q_OBJECT
-public:
-	explicit ControlGroup( Twidget *tw, QWidget *parent=0 )
-	{
-		init(tw, parent);
-	}
-	ControlGroup(){};
-	~ControlGroup(){};
-	QList<QRadioButton*> widgetList;
-	void init( Twidget *tw, QWidget *parent);
-	Twidget* getTwidget() {return m_tw;}
 
-private:
-	Twidget *m_tw;
-	QWidget *m_parent;
-
-};
-
-#if 0
 template <typename T>
 class ControlGroup : public QWidget
 {
-	Q_GADGET
 public:
 	explicit ControlGroup( Twidget *tw, QWidget *parent=0 )
 	{
@@ -136,9 +114,13 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 
 	// See if the caller wants a QButtonGroup. That would make these buttons
 	// mutually exclusive.
+	// The QButtonGroup emits a signal with the ID of the checked button for
+	// each button that is checked in an exclusive group.
 	//
 	if(tw->grouped)
 		tw->buttonGroup = new QButtonGroup(parent);
+	else
+		tw->mapper = new QSignalMapper(parent);
 
 	for (int index = 0; index < tw->objCount; index++)
 	{
@@ -175,14 +157,6 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 		//tw->labelList.append(new QLabel(parent));
 
 	}
-
-	// The caller wants these buttons grouped, so the buttonGroup will be
-	// sending the clicked signals to the signal mapper.
-	//
-	if(tw->grouped)
-		connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
-				tw->mapper, SLOT(map()));
 }
-#endif
 
 #endif // CONTROLGROUP_H

@@ -15,8 +15,7 @@ SOURCES += main.cpp\
 	BitButton.cpp \
 	dummy.cpp \
 	hexedit.cpp \
-	bitfield.cpp \
-    controlgroup.cpp
+	bitfield.cpp
 
 HEADERS  += bits.h \
 	BitButton.h \

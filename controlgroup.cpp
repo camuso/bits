@@ -1,3 +1,27 @@
+
+For the header file ...
+
+class ControlGroup : public QWidget
+{
+	Q_OBJECT
+public:
+	explicit ControlGroup( Twidget *tw, QWidget *parent=0 )
+	{
+		init(tw, parent);
+	}
+	ControlGroup(){};
+	~ControlGroup(){};
+	QList<QRadioButton*> widgetList;
+	void init( Twidget *tw, QWidget *parent);
+	Twidget* getTwidget() {return m_tw;}
+
+private:
+	Twidget *m_tw;
+	QWidget *m_parent;
+
+};
+
+
 #ifndef CONTROLGROUP_CPP
 #define CONTROLGROUP_CPP
 
