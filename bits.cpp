@@ -219,8 +219,8 @@ void bits::bitSizeClick(int bitSize)
 	quint64 qiBitsVal = getBits();
 	for (int index = 0; index < hex_array_size; index++)
 	{
-		ui->hexedit[index]->updateHexEdit((void*)&qiBitsVal);
 		ui->hexedit[index]->updateHexEditBitField(bf);
+		ui->hexedit[index]->updateHexEdit((void*)&qiBitsVal);
 	}
 	showBits();
 	showDecimals();
@@ -241,7 +241,14 @@ void bits::updateBits(int hexIndex)
 {
 	QString hexStr = ui->hexedit[hexIndex]->currentText();
 	bool ok;
+
+	// If it's a 64-bit input, remove the '.' frome the string
+	// before processing, and cleanup the white space, too.
+	//
+	hexStr = hexStr.remove('.');
+	hexStr = hexStr.trimmed();
 	quint64 hexVal = hexStr.toULongLong(&ok, 16);
+
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
 
 	for(int index = 0; index < binDigits; index++)

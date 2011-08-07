@@ -14,18 +14,18 @@
    <value key="EditorConfiguration.IndentBraces" type="bool">false</value>
    <value key="EditorConfiguration.IndentSize" type="int">4</value>
    <value key="EditorConfiguration.MouseNavigation" type="bool">true</value>
-   <value key="EditorConfiguration.PaddingMode" type="int">1</value>
+   <value key="EditorConfiguration.PaddingMode" type="int">2</value>
    <value key="EditorConfiguration.ScrollWheelZooming" type="bool">true</value>
    <value key="EditorConfiguration.SmartBackspace" type="bool">false</value>
-   <value key="EditorConfiguration.SpacesForTabs" type="bool">true</value>
+   <value key="EditorConfiguration.SpacesForTabs" type="bool">false</value>
    <value key="EditorConfiguration.TabKeyBehavior" type="int">0</value>
-   <value key="EditorConfiguration.TabSize" type="int">8</value>
+   <value key="EditorConfiguration.TabSize" type="int">4</value>
    <value key="EditorConfiguration.UseGlobal" type="bool">true</value>
    <value key="EditorConfiguration.Utf8BomBehavior" type="int">1</value>
    <value key="EditorConfiguration.addFinalNewLine" type="bool">true</value>
    <value key="EditorConfiguration.cleanIndentation" type="bool">true</value>
    <value key="EditorConfiguration.cleanWhitespace" type="bool">true</value>
-   <value key="EditorConfiguration.inEntireDocument" type="bool">false</value>
+   <value key="EditorConfiguration.inEntireDocument" type="bool">true</value>
   </valuemap>
  </data>
  <data>
@@ -82,7 +82,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">2</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">C:/Code/QtSDK/bits/bits-build-desktop</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">C:/Code/Projects/bits/bits-build-desktop</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="QString">ProjectExplorer.ToolChain.Msvc:c:\Program Files\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat..</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>
@@ -132,7 +132,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">0</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">C:/Code/QtSDK/bits/bits-build-desktop</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">C:/Code/Projects/bits/bits-build-desktop</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="QString">ProjectExplorer.ToolChain.Msvc:c:\Program Files\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat..</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>
@@ -182,7 +182,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">2</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">C:/Code/QtSDK/bits/bits-build-desktop</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">C:/Code/Projects/bits/bits-build-desktop</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">3</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="QString">ProjectExplorer.ToolChain.Mingw:C:/QtSDK/mingw/bin/g++.exe.x86-windows-msys-pe-32bit.C:/QtSDK/pythongdb/python_2.7based/gdb-i686-pc-mingw32.exe</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>
@@ -232,7 +232,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">0</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">C:/Code/QtSDK/bits/bits-build-desktop</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">C:/Code/Projects/bits/bits-build-desktop</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">3</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="QString">ProjectExplorer.ToolChain.Mingw:C:/QtSDK/mingw/bin/g++.exe.x86-windows-msys-pe-32bit.C:/QtSDK/pythongdb/python_2.7based/gdb-i686-pc-mingw32.exe</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>

@@ -41,8 +41,8 @@ void bitfield::setBitField (bitfield_t bf)
 }
 
 bitfield_t bitfield::getCurrentBitField() {return currentBitField;}
-char* bitfield::getBitmask (bitfield_t bf) {return bfMask[bf];}
-char* bitfield::getCurrentBitMask() {return bfMask[currentBitField];}
+const char* bitfield::getBitmask (bitfield_t bf) {return bfMask[bf];}
+const char* bitfield::getCurrentBitMask() {return bfMask[currentBitField];}
 int bitfield::getCurrentHexDigits() {return hexDigits[currentBitField];}
 int bitfield::getCurrentBinDigits() {return binDigits[currentBitField];}
 

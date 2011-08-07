@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2011-07-28T20:28:18
+# Project created by QtCreator 2011-08-07T03:15:44
 #
 #-------------------------------------------------
 
@@ -10,20 +10,21 @@ TARGET = bits
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-		bits.cpp \
-	BitButton.cpp \
-	dummy.cpp \
-	hexedit.cpp \
-	bitfield.cpp
+SOURCES += main.cpp \
+    hexedit.cpp \
+    dummy.cpp \
+    bits.cpp \
+    bitfield.cpp \
+    BitButton.cpp
 
-HEADERS  += bits.h \
-	BitButton.h \
-	ui_bits.h \
-	bits.ui.h \
-	dummy.h \
-	hexedit.h \
-	bitfield.h \
-	controlgroup.h
+HEADERS  += \
+    dummy.h \
+    controlgroup.h \
+    bits.ui.h \
+    bits.h \
+    bitfield.h \
+    BitButton.h \
+    hexedit.h
 
-FORMS    += bits.ui
+FORMS    += \
+    bits.ui

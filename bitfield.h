@@ -13,8 +13,8 @@ public:
 
 	void setBitField (bitfield_t bf);
 	bitfield_t getCurrentBitField();
-	char* getBitmask (bitfield_t bf);
-	char* getCurrentBitMask();
+	const char* getBitmask (bitfield_t bf);
+	const char* getCurrentBitMask();
 	int getCurrentBinDigits();
 	int getCurrentHexDigits();
 
@@ -22,7 +22,7 @@ private:
 	bitfield_t currentBitField;
 	int hexDigits[bitfield_array_size];
 	int binDigits[bitfield_array_size];
-	char *bfMask[bitfield_array_size];
+	const char *bfMask[bitfield_array_size];
 };
 
 #endif // BITFIELD_H
