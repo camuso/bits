@@ -30,7 +30,16 @@ bitfield::~bitfield()
 		delete bfMask[index];
 }
 
-void bitfield::setBitField (bitfield_t bf) {currentBitField = bf;}
+void bitfield::setBitField (bitfield_t bf)
+{
+	currentBitField = bf;
+	for(int index = 0; index < bitfield_array_size; index++)
+	{
+		hexDigits[index] = (2 << index);
+		binDigits[index] = (8 << index);
+	}
+}
+
 bitfield_t bitfield::getCurrentBitField() {return currentBitField;}
 char* bitfield::getBitmask (bitfield_t bf) {return bfMask[bf];}
 char* bitfield::getCurrentBitMask() {return bfMask[currentBitField];}

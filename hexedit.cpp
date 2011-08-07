@@ -72,5 +72,11 @@ void HexEdit::updateHexEdit(void* intx)
 	}
 }
 
+void HexEdit::updateHexEditBitField(bitfield_t bf)
+{
+	this->hexBitField->setBitField(bf);
+	this->lineEdit()->setInputMask(hexBitField->getCurrentBitMask());
+}
+
 bool HexEdit::isNewData( quint64 numData) {return( numData != prevHexVal );}
 bool HexEdit::isNewData( QString &strData) {return( strData != prevHexStr );}

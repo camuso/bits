@@ -15,6 +15,7 @@
 #ifndef	BITS_H
 #define	BITS_H
 
+#include <QObject>
 #include <QMainWindow>
 #include <QtCore>
 #include <QtCore/QTextStream>
@@ -66,7 +67,7 @@ private:
 	void showBits();
 	void hideBits();
 
-	ControlGroup <QRadioButton> *pBitSizes ;
+	//ControlGroup <QRadioButton> *pBitSizes;
 
 };
 

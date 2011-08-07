@@ -25,6 +25,7 @@ public:
 	void hexstr2int(QString& hexstr, void* intx);
 	void int2hexstr(void* intx, QString& hexstr);
 	void updateHexEdit(void* intx);
+	void updateHexEditBitField(bitfield_t bf);
 	bool isNewData(quint64 numData);
 	bool isNewData(QString& strData);
 

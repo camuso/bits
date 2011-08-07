@@ -87,10 +87,10 @@ bits::bits(QWidget *parent)	:
 	ui->shiftConnectGroup = new QButtonGroup(ui->centralWidget);
 
 	init_messageBox();
-	init_bbArray();
+	init_bbArray();		// The following sequence must occur in the order
+	init_bitSizes();	// : in which it is written.
 	init_heArray();
-	init_bitSizes();
-	hideBits();
+	showBits();
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -216,10 +216,14 @@ void bits::bitSizeClick(int bitSize)
 	default: bf = bit_32; break;
 	}
 
+	quint64 qiBitsVal = getBits();
 	for (int index = 0; index < hex_array_size; index++)
 	{
-		ui->hexedit[index]->hexBitField->setBitField(bf);
+		ui->hexedit[index]->updateHexEdit((void*)&qiBitsVal);
+		ui->hexedit[index]->updateHexEditBitField(bf);
 	}
+	showBits();
+	showDecimals();
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -292,7 +296,7 @@ void bits::showDecimals()
 	// Let's see if this is a negative number.
 	//
 	int bin = ui->hexedit[index]->hexBitField->getCurrentBinDigits();
-	bool negFlag = qiBitsVal & (1 << (bin - 1));
+	bool negFlag = qiBitsVal & (quint64)(1 << (bin - 1)) ? true : false;
 	QString redOpen = negFlag ? "<font color=\"Magenta\">" : "";
 	QString redClose = negFlag ? "</font>" : "";
 
@@ -326,6 +330,11 @@ void bits::sendMessage(QString& line, int level)
 	cursor.movePosition(QTextCursor::End);
 	ui->messages->setTextCursor(cursor);
 	//ui->messages->append(line);
+
+	Twidget* tw = ui->pBitSizes->getTwidget();
+	QButtonGroup* buttonGroup = tw->buttonGroup;
+	int id = buttonGroup->checkedId();
+	bool isCheckable = ui->pBitSizes->widgetList[id]->isCheckable();
 }
 
 /*//////////////////////////////////////////////////////////////////////////////
@@ -356,30 +365,23 @@ void bits::showBits()
 	int hexIndex = ui->bbConnectGroup->checkedId();
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
 
-	for(int index = 0; index < binDigits; index++)
+	for(int index = 0; index < BITS; index++)
 	{
-		ui->bb[index]->show();
-		ui->bb[index]->repaint();
-		ui->bbLabel[index]->show();
-		ui->bbLabel[index]->repaint();
+		if(index < binDigits)
+		{
+			ui->bb[index]->show();
+			ui->bb[index]->repaint();
+			ui->bbLabel[index]->show();
+			ui->bbLabel[index]->repaint();
+		}
+		else
+		{
+			ui->bb[index]->hide();
+			ui->bb[index]->repaint();
+			ui->bbLabel[index]->hide();
+			ui->bbLabel[index]->repaint();
+		}
 	}
-	ui->centralWidget->update();
-	ui->centralWidget->repaint();
-}
-
-void bits::hideBits()
-{
-	int hexIndex = ui->bbConnectGroup->checkedId();
-	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
-
-	for(int index = binDigits; index < BITS; index++)
-	{
-		ui->bb[index]->hide();
-		ui->bb[index]->repaint();
-		ui->bbLabel[index]->hide();
-		ui->bbLabel[index]->repaint();
-	}
-
 	ui->centralWidget->update();
 	ui->centralWidget->repaint();
 }
@@ -506,6 +508,8 @@ void bits::init_heArray()
 		int left_y = HE_LEFT_Y;
 		QString ObjName = "he_" % NameSubstr;
 
+		// Default is 32 bits
+		//
 		ui->hexedit[index] = new HexEdit(index, ui->centralWidget, bit_32);
 		ui->hexedit[index]->setObjectName(ObjName);
 		ui->hexedit[index]->setGeometry(QRect(left_x, left_y, HE_W, HE_H));
@@ -607,16 +611,16 @@ void bits::init_bitSizes()
 	// See controlgroup.h
 	//
 	const char *objText[] = {"8-bit", "16-bit", "32-bit", "64-bit"};
-	Twidget tw;
-	tw.objCount = 4;
-	tw.objName = "bitsizes";
-	tw.objText = objText;
-	tw.labelText = NULL;
-	tw.geometry = QRect(HE_LEFT_X, HE_LEFT_Y+72, 100, 20);
-	tw.topology = QRect(1, 4, 100, 20 );
-	tw.direction = go_down;
-	tw.increment = 20;
-	tw.grouped = true;
+	Twidget *tw = new Twidget;
+	tw->objCount = 4;
+	tw->objName = "bitsizes";
+	tw->objText = objText;
+	tw->labelText = NULL;
+	tw->geometry = QRect(HE_LEFT_X, HE_LEFT_Y+72, 100, 20);
+	tw->topology = QRect(1, 4, 100, 20 );
+	tw->direction = go_down;
+	tw->increment = 20;
+	tw->grouped = true;
 
 	// pBitSizes is declared in bits.h, not bits.ui.h.
 	// What puts it on the ui is having the ui as its parent, not
@@ -629,9 +633,11 @@ void bits::init_bitSizes()
 	// . Connect the output of the QSignalMapper that was created by
 	//   the ControlGroup class to the slot (handler) in this class.
 	//
-	pBitSizes = new ControlGroup <QRadioButton>(&tw, ui->centralWidget);
-	pBitSizes->widgetList[2]->setChecked(true); // 32-bit button
-	connect(tw.mapper, SIGNAL(mapped(int)), this, SLOT(bitSizeClici(int)));
+	//// ui->pBitSizes = new ControlGroup <QRadioButton>(tw, ui->centralWidget);
+	ui->pBitSizes = new ControlGroup (tw, ui->centralWidget);
+	ui->pBitSizes->widgetList[2]->setChecked(true); // 32-bit button
+	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
+			this, SLOT(bitSizeClick(int)));
 }
 
 /*/////////////////////////////////////////////////////////////////////////////

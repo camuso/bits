@@ -60,6 +60,7 @@ typedef void (*pSlot_t)(int);
 */
 class Twidget
 {
+	Q_GADGET
 public:
 	// These fields are must be initialized by the caller to ControlGroup
 	//
@@ -76,7 +77,6 @@ public:
 	//
 	// These fields will be initialized by ControlGroup
 	//
-	//QList *widgets;				// Pointer to the widget list
 	QList <QLabel> *labelList;	// List of QLabel objects
 	QList <pSlot_t> slotList;	// list of slot function pointers
 	QSignalMapper *mapper;		// The signal mapper for these objects
@@ -84,9 +84,31 @@ public:
 								// : together as a group.
 };
 
+class ControlGroup : public QWidget
+{
+	Q_OBJECT
+public:
+	explicit ControlGroup( Twidget *tw, QWidget *parent=0 )
+	{
+		init(tw, parent);
+	}
+	ControlGroup(){};
+	~ControlGroup(){};
+	QList<QRadioButton*> widgetList;
+	void init( Twidget *tw, QWidget *parent);
+	Twidget* getTwidget() {return m_tw;}
+
+private:
+	Twidget *m_tw;
+	QWidget *m_parent;
+
+};
+
+#if 0
 template <typename T>
 class ControlGroup : public QWidget
 {
+	Q_GADGET
 public:
 	explicit ControlGroup( Twidget *tw, QWidget *parent=0 )
 	{
@@ -96,6 +118,7 @@ public:
 	~ControlGroup(){};
 	QList<T*> widgetList;
 	void init( Twidget *tw, QWidget *parent);
+	Twidget* getTwidget() {return m_tw;}
 
 private:
 	Twidget *m_tw;
@@ -134,16 +157,32 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 		object->setText(QString(tw->objText[index]));
 		object->setGeometry(x, y, tw->geometry.width(), tw->geometry.height());
 
-		tw->mapper->setMapping(object, index);
-		connect(object, SIGNAL(activated(int)), tw->mapper, SLOT(map()));
-
+		// If the buttons are grouped, the buttonGroup will notify the mapper.
+		// In this case, the mapper only needs to be programmed at the end of
+		// this loop.
+		// If they are not grouped, the buttons themselves must notify the
+		// mapper, and the mapper must be programmed to recognize each button
+		// in the group.
+		//
 		if(tw->grouped)
 			tw->buttonGroup->addButton(object, index);
+		else
+		{
+			connect(object, SIGNAL(clicked()), tw->mapper, SLOT(map()));
+			tw->mapper->setMapping(object, index);
+		}
 
 		//tw->labelList.append(new QLabel(parent));
 
 	}
-}
 
+	// The caller wants these buttons grouped, so the buttonGroup will be
+	// sending the clicked signals to the signal mapper.
+	//
+	if(tw->grouped)
+		connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
+				tw->mapper, SLOT(map()));
+}
+#endif
 
 #endif // CONTROLGROUP_H
