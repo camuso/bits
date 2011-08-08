@@ -64,7 +64,7 @@ private:
 	QString& dec2hex(quint64 qiNumber);
 	void updateBits(int hexIndex);
 	void updateEdits();
-	void showDecimals();
+	void showDecimals(quint64 val);
 	void sendMessage(QString& line, int level);
 	void showBits();
 	void hideBits();

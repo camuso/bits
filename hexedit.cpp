@@ -24,7 +24,7 @@ HexEdit::HexEdit(int hexenum, QWidget *parent, bitfield_t bf) :
 	quint64 initVal = 0;
 	prevHexVal = ~initVal;
 	prevHexStr = "";
-	this->updateHexEdit((void*)&initVal);
+	this->updateHexEdit(initVal);
 
 	QFont font;
 #ifdef Q_WS_WIN
@@ -41,34 +41,46 @@ HexEdit::HexEdit(int hexenum, QWidget *parent, bitfield_t bf) :
 
 HexEdit::~HexEdit(){}
 
-void HexEdit::int2hexstr(void* intx, QString& hexstr)
+QString& HexEdit::int2hexstr(QString &hexStr, quint64 hexVal)
 {
 	int width = this->hexBitField->getCurrentHexDigits();
-	quint64 anint = *(quint64*)intx;
-	hexstr = QString("%1").arg(anint, width, 16, QChar('0'));
-	hexstr = hexstr.toUpper();
+	int binDigits = this->hexBitField->getCurrentBinDigits();
+
+	// Mask off any unused upper bits
+	//
+	hexVal &= 0xFFFFFFFFFFFFFFFF >> (64 - binDigits);
+
+	hexStr = QString("%1").arg((quint64)hexVal, width, 16, QChar('0'));
+	hexStr = hexStr.toUpper();
+	return hexStr;
 }
 
-void HexEdit::hexstr2int(QString& hexstr, void* intx)
+quint64 HexEdit::hexstr2int(QString& hexStr)
 {
-	int width = this->hexBitField->getCurrentHexDigits();
 	bool ok;
-	quint64 anint = hexstr.toULongLong(&ok, width);
-	*(quint64*)intx = anint;
+
+	hexStr = hexStr.remove('.');
+	hexStr = hexStr.trimmed();
+
+	// Convert the string to unsigned 64 bit integer, interpreting the
+	// string as base 16 (hexadecimal).
+	//
+	quint64 hexVal = hexStr.toULongLong(&ok, 16);
+	return hexVal;
 }
 
-void HexEdit::updateHexEdit(void* intx)
+void HexEdit::updateHexEdit(quint64 hexVal)
 {
-	quint64 anint = *(quint64*)intx;
-	QString hexstr;
-	int2hexstr(intx, hexstr);
-	this->setEditText(hexstr);
+	QString hexStr;
 
-	if(anint != prevHexVal)
+	hexStr = int2hexstr(hexStr, hexVal);
+	this->setEditText(hexStr);
+
+	if(hexVal != prevHexVal)
 	{
-		this->insertItem(0, hexstr);
-		prevHexVal = anint;
-		prevHexStr = hexstr;
+		this->insertItem(0, hexStr);
+		prevHexVal = hexVal;
+		prevHexStr = hexStr;
 	}
 }
 

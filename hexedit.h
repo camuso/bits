@@ -22,9 +22,9 @@ public:
 	QRadioButton *hexshift;
 	int	hexeditId;
 
-	void hexstr2int(QString& hexstr, void* intx);
-	void int2hexstr(void* intx, QString& hexstr);
-	void updateHexEdit(void* intx);
+	quint64 hexstr2int(QString& hexstr);
+	QString& int2hexstr(QString &hexStr, quint64 hexVal);
+	void updateHexEdit(quint64 hexVal);
 	void updateHexEditBitField(bitfield_t bf);
 	bool isNewData(quint64 numData);
 	bool isNewData(QString& strData);

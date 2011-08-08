@@ -127,9 +127,9 @@ void bits::mapped_bbClick(int bbId)
 	ui->bb[bbId]->bbToggle();
 
 	quint64 qiBitsVal = getBits();
-	ui->hexedit[index]->updateHexEdit((void*)&qiBitsVal);
+	ui->hexedit[index]->updateHexEdit(qiBitsVal);
 
-	this->showDecimals();
+	this->showDecimals(qiBitsVal);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ void bits::mapped_hexedit(int index)
 	&&(ui->bbConnectGroup->checkedId() == index))
 	{
 		updateBits(index);
-		showDecimals();
+		showDecimals(getBits());
 	}
 }
 
@@ -172,7 +172,7 @@ void bits::mapped_hexedit(int index)
 void bits::bbRadioClick(int index)
 {
 	quint64 qiBitsVal = getBits();
-	ui->hexedit[ index ]->updateHexEdit((void*)&qiBitsVal);
+	ui->hexedit[ index ]->updateHexEdit(qiBitsVal);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -221,21 +221,29 @@ void bits::bitSizeClick(int bitSize)
 	for (int index = 0; index < hex_array_size; index++)
 	{
 		ui->hexedit[index]->updateHexEditBitField(bf);
-		ui->hexedit[index]->updateHexEdit((void*)&qiBitsVal);
+		ui->hexedit[index]->updateHexEdit(qiBitsVal);
 	}
 	showBits();
-	showDecimals();
+	showDecimals(qiBitsVal);
 }
 
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::onInvert - invert the value in the hex box
+//
+*/
 void bits::onInvert(int index)
 {
-	quint64 qiBitsVal = getBits();
-	qiBitsVal = ~qiBitsVal;
-	ui->hexedit[ index ]->updateHexEdit((void*)&qiBitsVal);
-	updateBits(index);
-	showDecimals();
-}
+	QString hexStr = ui->hexedit[index]->currentText();
+	quint64 hexVal = ui->hexedit[index]->hexstr2int(hexStr);
+	int bbConnectIndex = ui->bbConnectGroup->checkedId();
 
+	hexVal = ~hexVal;
+	ui->hexedit[ index ]->updateHexEdit(hexVal);
+	if(index == bbConnectIndex)
+		updateBits(index);
+	showDecimals(hexVal);
+}
 
 /*/////////////////////////////////////////////////////////////////////////////
 //
@@ -251,15 +259,7 @@ void bits::onInvert(int index)
 void bits::updateBits(int hexIndex)
 {
 	QString hexStr = ui->hexedit[hexIndex]->currentText();
-	bool ok;
-
-	// If it's a 64-bit input, remove the '.' frome the string
-	// before processing, and cleanup the white space, too.
-	//
-	hexStr = hexStr.remove('.');
-	hexStr = hexStr.trimmed();
-	quint64 hexVal = hexStr.toULongLong(&ok, 16);
-
+	quint64 hexVal = ui->hexedit[hexIndex]->hexstr2int(hexStr);
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
 
 	for(int index = 0; index < binDigits; index++)
@@ -287,21 +287,19 @@ void bits::updateBits(int hexIndex)
 //
 // The unsigned conversion requires no such special handling.
 */
-void bits::showDecimals()
+void bits::showDecimals(quint64 val)
 {
-	quint64 qiBitsVal = getBits();
 	QString signedVal;
+	int index = ui->bbConnectGroup->checkedId();
+	bitfield_t bf = ui->hexedit[index]->hexBitField->getCurrentBitField();
 
 	// This may be overkill, but as a wise engineer once commented
 	// paranoia is good in this business.
 	//
-	qint8  sint_8  = (qint8) qiBitsVal & (qint8) 0xFF;
-	qint16 sint_16 = (qint16)qiBitsVal & (qint16)0xFFFF;
-	qint32 sint_32 = (qint32)qiBitsVal & (qint32)0xFFFFFFFF;
-	qint64 sint_64 = (qint64)qiBitsVal & (qint64)0xFFFFFFFFFFFFFFFF;
-
-	int index = ui->bbConnectGroup->checkedId();
-	bitfield_t bf = ui->hexedit[index]->hexBitField->getCurrentBitField();
+	qint8  sint_8  = (qint8) val & (qint8) 0xFF;
+	qint16 sint_16 = (qint16)val & (qint16)0xFFFF;
+	qint32 sint_32 = (qint32)val & (qint32)0xFFFFFFFF;
+	qint64 sint_64 = (qint64)val & (qint64)0xFFFFFFFFFFFFFFFF;
 
 	switch(bf)
 	{
@@ -311,14 +309,19 @@ void bits::showDecimals()
 	case bit_64: signedVal = QString("%1").arg(sint_64); break;
 	}
 
-	// Let's see if this is a negative number.
+	// Let's see if this is a negative number. It's ok if we do it in
+	// discrete steps and let the compiler optimize it.
+	// Never sacrifice clarity for brevity, and clever is not always
+	// smart. Besides, it makes debugging a lot easier. :)
 	//
 	int bin = ui->hexedit[index]->hexBitField->getCurrentBinDigits();
-	bool negFlag = qiBitsVal & (quint64)(1 << (bin - 1)) ? true : false;
+	quint64 bitMask = (quint64)1 << (bin - 1);
+	bool negFlag = val & bitMask ? true : false;
+
 	QString redOpen = negFlag ? "<font color=\"Magenta\">" : "";
 	QString redClose = negFlag ? "</font>" : "";
 
-	QString	line = "unsigned decimal: " % QString::number(quint64(qiBitsVal));
+	QString	line = "unsigned decimal: " % QString::number(quint64(val));
 	line = line	% redOpen % " signed decimal: " % signedVal % redClose;
 	sendMessage(line, msg_info);
 }
@@ -625,10 +628,8 @@ void bits::init_bitSizes()
 	tw->objName = "bitsizes";
 	tw->objText = objText;
 	tw->labelText = NULL;
-	tw->geometry = QRect(HE_LEFT_X, HE_LEFT_Y+72, 100, 20);
-	tw->topology = QRect(1, 4, 100, 20 );
-	tw->direction = go_down;
-	tw->increment = 20;
+	tw->sizes << QSize(100,20)<<QSize(100,20)<<QSize(100,20)<<QSize(100,20);
+	tw->layout << QPoint(30,102)<<QPoint(30,122)<<QPoint(30,142)<<QPoint(30,162);
 	tw->grouped = true;
 
 	// . Create the new ControlGroup for bit width
@@ -656,10 +657,8 @@ void bits::init_invert()
 	tw->objName = "invert";
 	tw->objText = objText;
 	tw->labelText = NULL;
-	tw->geometry = QRect(HE_LEFT_X+200, HE_LEFT_Y+48, 20, 20);
-	tw->topology = QRect(3, 1, 100, 20 );
-	tw->direction = go_right;
-	tw->increment = 20;
+	tw->sizes << QSize(20, 20) << QSize(20, 20) << QSize(20, 20);
+	tw->layout << QPoint(230, 60) << QPoint(481, 60) << QPoint(735, 60);
 	tw->grouped = false;  // These buttons are not grouped.
 	ui->pInvert = new ControlGroup <QPushButton>(tw, ui->centralWidget);
 	connect(tw->mapper, SIGNAL(mapped(int)), this, SLOT(onInvert(int)));
