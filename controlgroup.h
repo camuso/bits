@@ -129,10 +129,13 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 		// Layout the objects according to the Table Configuration given by
 		// the "topology" field in the Twidget struct.
 		//
-		int x = tw->geometry.x() + ((index % tw->topology.x()) * tw->geometry.width())
-								 + ((index % tw->topology.x()) * tw->geometry.height());
-		int y = tw->geometry.y() + ((index % tw->topology.y()) * tw->geometry.height())
-								 + ((index % tw->topology.x()) * tw->geometry.width());
+		int x = tw->geometry.x()
+				+ ((index % tw->topology.x()) * tw->geometry.width())
+				+ ((index % tw->topology.x()) * tw->geometry.height());
+
+		int y = tw->geometry.y()
+				+ ((index % tw->topology.y()) * tw->geometry.height())
+				+ ((index % tw->topology.x()) * tw->geometry.width());
 
 		widgetList.append((T *)object);
 		object->setObjectName(QString(tw->objName % QString::number(index)));

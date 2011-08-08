@@ -103,6 +103,7 @@ public:
 	QButtonGroup *shiftConnectGroup;
 
 	ControlGroup <QRadioButton> *pBitSizes;
+	ControlGroup <QPushButton> *pInvert;
 
 	QMenuBar *menuBar;
 	QToolBar *mainToolBar;

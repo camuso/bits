@@ -88,8 +88,9 @@ bits::bits(QWidget *parent)	:
 
 	init_messageBox();
 	init_bbArray();		// The following sequence must occur in the order
-	init_bitSizes();	// : in which it is written.
-	init_heArray();
+	init_bitSizes();	// : in which it is written. The bit sizes must
+	init_heArray();		// : first be determined
+	init_invert();		// create the "invert" buttonsCcasd
 	showBits();
 }
 
@@ -225,6 +226,16 @@ void bits::bitSizeClick(int bitSize)
 	showBits();
 	showDecimals();
 }
+
+void bits::onInvert(int index)
+{
+	quint64 qiBitsVal = getBits();
+	qiBitsVal = ~qiBitsVal;
+	ui->hexedit[ index ]->updateHexEdit((void*)&qiBitsVal);
+	updateBits(index);
+	showDecimals();
+}
+
 
 /*/////////////////////////////////////////////////////////////////////////////
 //
@@ -372,16 +383,12 @@ void bits::showBits()
 		if(index < binDigits)
 		{
 			ui->bb[index]->show();
-			ui->bb[index]->repaint();
 			ui->bbLabel[index]->show();
-			ui->bbLabel[index]->repaint();
 		}
 		else
 		{
 			ui->bb[index]->hide();
-			ui->bb[index]->repaint();
 			ui->bbLabel[index]->hide();
-			ui->bbLabel[index]->repaint();
 		}
 	}
 	ui->centralWidget->update();
@@ -624,11 +631,6 @@ void bits::init_bitSizes()
 	tw->increment = 20;
 	tw->grouped = true;
 
-	// pBitSizes is declared in bits.h, not bits.ui.h.
-	// What puts it on the ui is having the ui as its parent, not
-	// putting it in the bits.ui.h, where the ui is declared and
-	// initialized. Just a little variety for spice. :)
-	//
 	// . Create the new ControlGroup for bit width
 	// . Set the 32-bit width as the default, which is widget[2] in
 	//   the QList of button objects, widgetList.
@@ -640,6 +642,28 @@ void bits::init_bitSizes()
 	ui->pBitSizes->widgetList[2]->setChecked(true); // 32-bit button default
 	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
 			this, SLOT(bitSizeClick(int)));
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::init_invert
+*/
+void bits::init_invert()
+{
+	const char *objText[] = {"~", "~", "~"};
+	Twidget *tw = new Twidget;
+	tw->objCount = 3;
+	tw->objName = "invert";
+	tw->objText = objText;
+	tw->labelText = NULL;
+	tw->geometry = QRect(HE_LEFT_X+200, HE_LEFT_Y+48, 20, 20);
+	tw->topology = QRect(3, 1, 100, 20 );
+	tw->direction = go_right;
+	tw->increment = 20;
+	tw->grouped = false;  // These buttons are not grouped.
+	ui->pInvert = new ControlGroup <QPushButton>(tw, ui->centralWidget);
+	connect(tw->mapper, SIGNAL(mapped(int)), this, SLOT(onInvert(int)));
+
 }
 
 /*/////////////////////////////////////////////////////////////////////////////

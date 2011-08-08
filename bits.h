@@ -50,6 +50,7 @@ private	slots:
 	void bbRadioClick(int);
 	void shiftRadioClick(int);
 	void bitSizeClick(int);
+	void onInvert(int);
 
 private:
 	Ui::bits *ui;
@@ -57,8 +58,9 @@ private:
 	quint64	getBits();
 	void init_messageBox();
 	void init_bbArray();
-	void init_heArray();
 	void init_bitSizes();
+	void init_heArray();
+	void init_invert();
 	QString& dec2hex(quint64 qiNumber);
 	void updateBits(int hexIndex);
 	void updateEdits();
