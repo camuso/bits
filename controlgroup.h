@@ -30,7 +30,7 @@ typedef void (*pSlot_t)(int);
 ** objName		- stem object name. The index of each object in the list will
 **				  be added to the name for each object
 ** objCount		- the number of objects to be created
-** objText		- *char[] array of strings to be displayed on each object.
+** objText		- QList of strings to be displayed on each object.
 ** sizes		- QList of QSize gives height & width of each object in pixels.
 ** layout		- QList of QPoint for the location of each object in pixels.
 ** labelNames	- *char[] array of strings to be displayed on each label.
@@ -60,7 +60,7 @@ public:
 	//
 	QString objName;			// stem object name of widget
 	int objCount;				// Number of widgets
-	const char** objText;		// text displayed on objects,
+	QList <QString> objText;	// text displayed on objects,
 	QList <QSize> sizes;		// A list of sizes for the objects
 	QList <QPoint> layout;		// A list of locations for the objects
 	bool grouped;				// group these in a QButtonGroup
@@ -127,7 +127,7 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 		// the "topology" field in the Twidget struct.
 		//
 		object->setObjectName(QString(tw->objName % QString::number(index)));
-		object->setText(QString(tw->objText[index]));
+		object->setText(tw->objText[index]);
 
 		int x = tw->layout[index].x();
 		int y = tw->layout[index].y();

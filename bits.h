@@ -33,7 +33,7 @@ namespace Ui {
 	class bits;
 }
 
-class bits : public	QMainWindow
+class bits : public QMainWindow
 {
 	Q_OBJECT
 
@@ -61,6 +61,7 @@ private:
 	void init_bitSizes();
 	void init_heArray();
 	void init_invert();
+	void init_shiftOp();
 	QString& dec2hex(quint64 qiNumber);
 	void updateBits(int hexIndex);
 	void updateEdits();
@@ -69,8 +70,9 @@ private:
 	void showBits();
 	void hideBits();
 
-	//ControlGroup <QRadioButton> *pBitSizes;
-
+	ControlGroup <QRadioButton> *pBitSizes;
+	ControlGroup <QPushButton> *pInvert;
+	ShiftOp *shiftBox;
 };
 
 #endif // BITS_H

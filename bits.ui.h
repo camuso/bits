@@ -45,6 +45,7 @@
 #include "BitButton.h"
 #include "hexedit.h"
 #include "controlgroup.h"
+#include "shiftop.h"
 
 #define	QT_USE_FAST_CONCATENATION	// use % instead of	+ for string concatenation
 
@@ -97,13 +98,11 @@ public:
 
 	BitButton *bb[BITS];
 	QLabel *bbLabel[BITS];
+	QFrame *bbFrame;
 
 	HexEdit	*hexedit[hex_array_size];
 	QButtonGroup *bbConnectGroup;
 	QButtonGroup *shiftConnectGroup;
-
-	ControlGroup <QRadioButton> *pBitSizes;
-	ControlGroup <QPushButton> *pInvert;
 
 	QMenuBar *menuBar;
 	QToolBar *mainToolBar;

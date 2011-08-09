@@ -91,7 +91,9 @@ bits::bits(QWidget *parent)	:
 	init_bitSizes();	// : in which it is written. The bit sizes must
 	init_heArray();		// : first be determined
 	init_invert();		// create the "invert" buttonsCcasd
+	init_shiftOp();
 	showBits();
+
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -419,6 +421,17 @@ void bits::init_bbArray()
 	//
 	connect(bbMapper, SIGNAL(mapped(int)), this, SLOT(mapped_bbClick(int)));
 
+	// Create a pretty frame for our buttons.
+	//
+	ui->bbFrame = new QFrame(ui->centralWidget);
+	ui->bbFrame->setObjectName(QString::fromUtf8("frame"));
+	ui->bbFrame->setGeometry(QRect(14, 190, 740, 120));
+	ui->bbFrame->setFrameShape(QFrame::StyledPanel );
+	//ui->bbFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+	//ui->bbFrame->setFrameShadow(QFrame::Raised);
+	ui->bbFrame->show();
+
+
 	for	(int index = 0;	index <	BITS; index++)
 	{
 		// BitButton
@@ -446,6 +459,7 @@ void bits::init_bbArray()
 		ui->bb[index] =	new	BitButton(index, ui->centralWidget);
 		ui->bb[index]->setObjectName(bbName);
 		ui->bb[index]->setGeometry(QRect(bb_x, bb_y, BB_W, BB_H));
+		//ui->bb[index]->set
 
 		// BitButton Label
 		// ===============
@@ -622,14 +636,15 @@ void bits::init_bitSizes()
 	// by the ControlGroup to create the button control group.
 	// See controlgroup.h
 	//
-	const char *objText[] = {"8-bit", "16-bit", "32-bit", "64-bit"};
 	Twidget *tw = new Twidget;
 	tw->objCount = 4;
 	tw->objName = "bitsizes";
-	tw->objText = objText;
+	tw->objText << "8-bit" << "16-bit" << "32-bit" << "64-bit";
 	tw->labelText = NULL;
-	tw->sizes << QSize(100,20)<<QSize(100,20)<<QSize(100,20)<<QSize(100,20);
-	tw->layout << QPoint(30,102)<<QPoint(30,122)<<QPoint(30,142)<<QPoint(30,162);
+	tw->sizes << QSize(100, 20) << QSize(100, 20)
+			  << QSize(100, 20) << QSize(100, 20);
+	tw->layout << QPoint(30, 102) << QPoint(30, 122)
+			   << QPoint(30, 142) << QPoint(30, 162);
 	tw->grouped = true;
 
 	// . Create the new ControlGroup for bit width
@@ -639,8 +654,8 @@ void bits::init_bitSizes()
 	//   the ControlGroup class to the slot (handler) in this class.
 	// . Set the 32-bit button as the default.
 	//
-	ui->pBitSizes = new ControlGroup <QRadioButton>(tw, ui->centralWidget);
-	ui->pBitSizes->widgetList[2]->setChecked(true); // 32-bit button default
+	pBitSizes = new ControlGroup <QRadioButton>(tw, ui->centralWidget);
+	pBitSizes->widgetList[2]->setChecked(true); // 32-bit button default
 	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
 			this, SLOT(bitSizeClick(int)));
 }
@@ -651,18 +666,25 @@ void bits::init_bitSizes()
 */
 void bits::init_invert()
 {
-	const char *objText[] = {"~", "~", "~"};
 	Twidget *tw = new Twidget;
 	tw->objCount = 3;
 	tw->objName = "invert";
-	tw->objText = objText;
+	tw->objText << "~" << "~" << "~";
 	tw->labelText = NULL;
 	tw->sizes << QSize(20, 20) << QSize(20, 20) << QSize(20, 20);
 	tw->layout << QPoint(230, 60) << QPoint(481, 60) << QPoint(735, 60);
 	tw->grouped = false;  // These buttons are not grouped.
-	ui->pInvert = new ControlGroup <QPushButton>(tw, ui->centralWidget);
+	pInvert = new ControlGroup <QPushButton>(tw, ui->centralWidget);
 	connect(tw->mapper, SIGNAL(mapped(int)), this, SLOT(onInvert(int)));
+}
 
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::init_shiftOp
+*/
+void bits::init_shiftOp()
+{
+	shiftBox = new ShiftOp(ui->centralWidget);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
