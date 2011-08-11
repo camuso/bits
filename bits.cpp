@@ -226,7 +226,6 @@ void bits::bitSizeClick(int bitSize)
 		ui->hexedit[index]->updateHexEdit(qiBitsVal);
 	}
 	showBits();
-	showDecimals(qiBitsVal);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -323,8 +322,8 @@ void bits::showDecimals(quint64 val)
 	QString redOpen = negFlag ? "<font color=\"Magenta\">" : "";
 	QString redClose = negFlag ? "</font>" : "";
 
-	QString	line = "unsigned decimal: " % QString::number(quint64(val));
-	line = line	% redOpen % " signed decimal: " % signedVal % redClose;
+	QString	line = "unsigned : " % QString::number(quint64(val));
+	line = line	% redOpen % " signed : " % signedVal % redClose;
 	sendMessage(line, msg_info);
 }
 
@@ -384,11 +383,13 @@ void bits::showBits()
 	//
 	int hexIndex = ui->bbConnectGroup->checkedId();
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
+	bool large = binDigits > 32 ? true : false;
 
 	const int fx = 14;
 	const int fy = 190;
 	const int fw = 690;
-	int fh = binDigits <= 32 ? 60 : 110;
+	int fh = large ? 110 : 60;
+	int wh = large ? MAINWINDOW_H + 50: MAINWINDOW_H;
 
 	for(int index = 0; index < BITS; index++)
 	{
@@ -404,7 +405,10 @@ void bits::showBits()
 		}
 	}
 	ui->bbFrame->setGeometry(QRect(fx, fy, fw, fh));
+
+	this->resize(MAINWINDOW_W, wh);
 	updateMessageBox();
+	showDecimals(getBits());
 }
 
 

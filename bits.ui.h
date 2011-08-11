@@ -52,7 +52,7 @@
 // Main	Window Geometry
 // ====================
 #define	MAINWINDOW_W 716
-#define	MAINWINDOW_H 400
+#define	MAINWINDOW_H 360
 
 #define INIT_BITSIZE 32
 
