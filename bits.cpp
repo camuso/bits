@@ -238,8 +238,11 @@ void bits::onInvert(int index)
 	QString hexStr = ui->hexedit[index]->currentText();
 	quint64 hexVal = ui->hexedit[index]->hexstr2int(hexStr);
 	int bbConnectIndex = ui->bbConnectGroup->checkedId();
+	quint64 bitMask = 0xFFFFFFFFFFFFFFFF;
 
+	bitMask >>= (64 - ui->hexedit[index]->hexBitField->getCurrentBinDigits());
 	hexVal = ~hexVal;
+	hexVal &= bitMask;
 	ui->hexedit[ index ]->updateHexEdit(hexVal);
 	if(index == bbConnectIndex)
 		updateBits(index);
