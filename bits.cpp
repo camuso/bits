@@ -380,8 +380,15 @@ quint64	bits::getBits()
 */
 void bits::showBits()
 {
+	// Frame dimensions
+	//
 	int hexIndex = ui->bbConnectGroup->checkedId();
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
+
+	const int fx = 14;
+	const int fy = 190;
+	const int fw = 690;
+	int fh = binDigits <= 32 ? 60 : 110;
 
 	for(int index = 0; index < BITS; index++)
 	{
@@ -396,8 +403,8 @@ void bits::showBits()
 			ui->bbLabel[index]->hide();
 		}
 	}
-	ui->centralWidget->update();
-	ui->centralWidget->repaint();
+	ui->bbFrame->setGeometry(QRect(fx, fy, fw, fh));
+	updateMessageBox();
 }
 
 
@@ -421,16 +428,12 @@ void bits::init_bbArray()
 	//
 	connect(bbMapper, SIGNAL(mapped(int)), this, SLOT(mapped_bbClick(int)));
 
-	// Create a pretty frame for our buttons.
-	//
 	ui->bbFrame = new QFrame(ui->centralWidget);
 	ui->bbFrame->setObjectName(QString::fromUtf8("frame"));
-	ui->bbFrame->setGeometry(QRect(14, 190, 740, 120));
 	ui->bbFrame->setFrameShape(QFrame::StyledPanel );
 	//ui->bbFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 	//ui->bbFrame->setFrameShadow(QFrame::Raised);
-	ui->bbFrame->show();
-
+	//ui->bbFrame->show();
 
 	for	(int index = 0;	index <	BITS; index++)
 	{
@@ -445,10 +448,11 @@ void bits::init_bbArray()
 		// progress through each of the BitButtons, whose state can be
 		// changed with the space key.
 		//
+		int bbw = BB_W + BB_MARGIN;
 		int	row	= index	/ COLS;
 		int	col	= index	% COLS;
 		int	nybMargin =	(col / 4) *	NYB_MARGIN;
-		int	bb_x = BB_X	- (col * BB_W) - nybMargin;
+		int	bb_x = BB_X	- (col * bbw) - nybMargin;
 		int	bb_y = BB_Y	+ (row * ROW_MARGIN);
 
 		QString	bbName = "bb_" % QString::number(index);
@@ -552,13 +556,13 @@ void bits::init_heArray()
 		// to use kestrokes to change Radio Button state.
 		// Not yet ...
 		//
-		left_y = HE_LEFT_Y + 24;
+		left_y = HE_LEFT_Y + 27;
 		ObjName = "he_bits_rb_" % NameSubstr;
 		HEXMAC(hexbits)->setObjectName(ObjName);
 		HEXMAC(hexbits)->setGeometry(QRect(left_x, left_y, HE_W, HE_H));
 		HEXMAC(hexbits)->setText(QString("Bit Buttons"));
 
-		left_y += 20;
+		left_y += 18;
 		ObjName = "he_shift_rb_" % NameSubstr;
 		HEXMAC(hexshift)->setObjectName(ObjName);
 		HEXMAC(hexshift)->setGeometry(QRect(left_x, left_y, HE_W, HE_H));
@@ -636,15 +640,20 @@ void bits::init_bitSizes()
 	// by the ControlGroup to create the button control group.
 	// See controlgroup.h
 	//
+	const int x = 30;
+	const int y = 105;
+	const int i = 17;
+	const int w = 50;
+	const int h = 20;
+
 	Twidget *tw = new Twidget;
 	tw->objCount = 4;
 	tw->objName = "bitsizes";
 	tw->objText << "8-bit" << "16-bit" << "32-bit" << "64-bit";
 	tw->labelText = NULL;
-	tw->sizes << QSize(100, 20) << QSize(100, 20)
-			  << QSize(100, 20) << QSize(100, 20);
-	tw->layout << QPoint(30, 102) << QPoint(30, 122)
-			   << QPoint(30, 142) << QPoint(30, 162);
+	tw->sizes << QSize(w, h) << QSize(w, h) << QSize(w, h) << QSize(w, h);
+	tw->layout << QPoint(x, y)       << QPoint(x, y + i)
+			   << QPoint(x, y + 2*i) << QPoint(x, y + 3*i);
 	tw->grouped = true;
 
 	// . Create the new ControlGroup for bit width
@@ -658,6 +667,11 @@ void bits::init_bitSizes()
 	pBitSizes->widgetList[2]->setChecked(true); // 32-bit button default
 	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
 			this, SLOT(bitSizeClick(int)));
+
+	//bitSizeFrame = new QFrame(ui->centralWidget);
+	//bitSizeFrame->setObjectName(QString::fromUtf8("frame"));
+	//bitSizeFrame->setGeometry(QRect(x-6, y-2, w+8, h*4));
+	//bitSizeFrame->setFrameShape(QFrame::StyledPanel );
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -666,13 +680,18 @@ void bits::init_bitSizes()
 */
 void bits::init_invert()
 {
+	const int x = 210;
+	const int y = 64;
+	const int inc = HE_W + HE_SKIP_W;
+	const int w = 20;
+	const int h = 20;
 	Twidget *tw = new Twidget;
 	tw->objCount = 3;
 	tw->objName = "invert";
 	tw->objText << "~" << "~" << "~";
 	tw->labelText = NULL;
-	tw->sizes << QSize(20, 20) << QSize(20, 20) << QSize(20, 20);
-	tw->layout << QPoint(230, 60) << QPoint(481, 60) << QPoint(735, 60);
+	tw->sizes << QSize(w, h) << QSize(w, h) << QSize(w, h);
+	tw->layout << QPoint(x, y) << QPoint(x+inc, y) << QPoint(x+2*inc, y);
 	tw->grouped = false;  // These buttons are not grouped.
 	pInvert = new ControlGroup <QPushButton>(tw, ui->centralWidget);
 	connect(tw->mapper, SIGNAL(mapped(int)), this, SLOT(onInvert(int)));
@@ -698,15 +717,6 @@ void bits::init_messageBox()
 	// informationals messages.
 	//
 	ui->messages = new QTextEdit(ui->centralWidget);
-	ui->messages->setGeometry(QRect(30, BB_Y + 110, 716, 80));
-	ui->messages->setFocusPolicy(Qt::ClickFocus);
-
-	// Leave the window Read Only, so users can copy contents.
-	// The setEnabled(false) call not only makes it read-only, but you cannot
-	// copy from it.
-	//
-	//ui->messages->setEnabled(false);
-	ui->messages->setReadOnly(true);
 
 	QFont font;
 #ifdef Q_WS_WIN
@@ -720,8 +730,28 @@ void bits::init_messageBox()
 	ui->messages->setFont(font);
 	ui->messages->setStyleSheet("color: aqua; background-color: black");
 
-	ui->msgLabel = new QLabel("Messages", ui->centralWidget);
-	ui->msgLabel->setGeometry(QRect(30, BB_Y + 86, 100, 24));
+	// Leave the window Read Only, so users can copy contents.
+	// The setEnabled(false) call not only makes it read-only, but you cannot
+	// copy from it.
+	//
+	//ui->messages->setEnabled(false);
+	ui->messages->setReadOnly(true);
+	ui->messages->setFocusPolicy(Qt::ClickFocus);
+	ui->messages->setUpdatesEnabled(true);
+}
+
+void bits::updateMessageBox()
+{
+	int index = ui->bbConnectGroup->checkedId();
+	int binDigits = ui->hexedit[index]->hexBitField->getCurrentBinDigits();
+	const int mx = BB_X - 655;
+	int my = binDigits <= 32 ? BB_Y + 40 : BB_Y + 88;
+	const int mw = 690;
+	const int mh = 80;
+
+	ui->messages->hide(); // Makes the transition cleaner
+	ui->messages->setGeometry(QRect(mx, my, mw, mh));
+	ui->messages->show();
 }
 
 

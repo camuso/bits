@@ -51,8 +51,10 @@
 
 // Main	Window Geometry
 // ====================
-#define	MAINWINDOW_W 780
-#define	MAINWINDOW_H 460
+#define	MAINWINDOW_W 716
+#define	MAINWINDOW_H 400
+
+#define INIT_BITSIZE 32
 
 // BitButton and BitButton Label Geometry
 // ======================================
@@ -60,12 +62,13 @@
 #define	ROWS (BITS/32)
 #define	COLS (BITS/2)
 
-#define	BB_X 720
+#define	BB_X 670
 #define	BB_Y 220
-#define	BB_W 20
-#define	BB_H 24
+#define	BB_W 18
+#define	BB_H 22
+#define BB_MARGIN 0
 
-#define	NYB_MARGIN 10
+#define	NYB_MARGIN 12
 #define	ROW_MARGIN (BB_H + (BB_H / 2))
 
 #define	BB_LABEL_W BB_W
@@ -80,12 +83,12 @@ enum hexedit_t
 };
 
 
-#define	HE_W 220
-#define	HE_H 24
+#define	HE_W 200
+#define	HE_H 30
 
 #define	HE_LEFT_X 30
 #define	HE_LEFT_Y 30
-#define	HE_SKIP_W 32
+#define	HE_SKIP_W 38
 
 QT_BEGIN_NAMESPACE
 
@@ -94,7 +97,6 @@ class Ui_bits
 public:
 	QWidget	*centralWidget;
 	QTextEdit *messages;
-	QLabel *msgLabel;
 
 	BitButton *bb[BITS];
 	QLabel *bbLabel[BITS];
@@ -104,9 +106,9 @@ public:
 	QButtonGroup *bbConnectGroup;
 	QButtonGroup *shiftConnectGroup;
 
-	QMenuBar *menuBar;
-	QToolBar *mainToolBar;
-	QStatusBar *statusBar;
+	//QMenuBar *menuBar;
+	//QToolBar *mainToolBar;
+	//QStatusBar *statusBar;
 
 	void setupUi(QMainWindow *bits)
 	{
@@ -118,7 +120,7 @@ public:
 		centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
 
 		bits->setCentralWidget(centralWidget);
-
+#if 0
 		menuBar	= new QMenuBar(bits);
 		menuBar->setObjectName(QString::fromUtf8("menuBar"));
 		menuBar->setGeometry(QRect(0, 0, 760, 20));
@@ -131,10 +133,7 @@ public:
 		statusBar =	new	QStatusBar(bits);
 		statusBar->setObjectName(QString::fromUtf8("statusBar"));
 		bits->setStatusBar(statusBar);
-
-		//ControlGroup<QRadioButton> bitSizes;
-		//pBitSizes = &bitSizes;
-
+#endif
 		QMetaObject::connectSlotsByName(bits);
 
 	} // setupUi

@@ -65,6 +65,7 @@ private:
 	QString& dec2hex(quint64 qiNumber);
 	void updateBits(int hexIndex);
 	void updateEdits();
+	void updateMessageBox();
 	void showDecimals(quint64 val);
 	void sendMessage(QString& line, int level);
 	void showBits();
@@ -72,6 +73,7 @@ private:
 
 	ControlGroup <QRadioButton> *pBitSizes;
 	ControlGroup <QPushButton> *pInvert;
+	QFrame *bitSizeFrame;
 	ShiftOp *shiftBox;
 };
 

@@ -28,8 +28,8 @@ HexEdit::HexEdit(int hexenum, QWidget *parent, bitfield_t bf) :
 
 	QFont font;
 #ifdef Q_WS_WIN
-		font.setPointSize(font.pointSize() + 4);
-		font.setFamily("Consolas");
+		font.setPointSize(font.pointSize() + 3);
+		font.setFamily("Lucida Console");
 #endif
 #ifdef Q_WS_X11
 		font.setFamily("Monospace");

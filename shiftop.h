@@ -4,17 +4,34 @@
 #include <QWidget>
 #include <QtCore>
 #include <QtGui>
+#include <QtDesigner/QDesignerCustomWidgetInterface>
 #include "controlgroup.h"
-//#include <QtDesigner/QDesignerCustomWidgetInterface>
 
+/*////////////////////////////////////////////////////////////////////////////
+*/
+class ShiftBox : public QLineEdit
+{
+	Q_OBJECT
 
+public:
+	ShiftBox(QWidget *parent=0);
+	//~ShiftBox();
+
+	void set_geometry(QRect& rect);
+
+private:
+	QFrame *frame_3;
+};
+
+/*////////////////////////////////////////////////////////////////////////////
+*/
 class ShiftOp : public QWidget
 {
 	Q_OBJECT
 public:
 	explicit ShiftOp(QWidget *parent = 0);
 
-	QPlainTextEdit *shiftBox;
+	ShiftBox *shiftBox;
 	ControlGroup <QPushButton> *pShiftButtons;
 
 
@@ -30,5 +47,7 @@ private:
 	int	currentShiftVal;
 
 };
+
+
 
 #endif // SHIFTOP_H

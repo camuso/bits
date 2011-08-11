@@ -2,9 +2,8 @@
 #define	BITBUTTON_H
 
 #include <QtCore>
-#include <QtCore/QTextStream>
 #include <QtGui>
-#include <QtDesigner/QDesignerCustomWidgetInterface>
+//#include <QtDesigner/QDesignerCustomWidgetInterface>
 
 class BitButton	: public QPushButton
 {
@@ -24,6 +23,12 @@ private	slots:
 
 private:
 	QString	bbStyle[2];
+	QFrame *bbFrame;
+	QColor foreground;
+	QColor background;
+	QColor highlight;
+	QColor HighText;
+	QList <QColor> bbColors;
 };
 
 
