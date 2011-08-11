@@ -54,7 +54,10 @@
 #define	MAINWINDOW_W 716
 #define	MAINWINDOW_H 360
 
-#define INIT_BITSIZE 32
+#define INIT_BITSIZE 32		// The default bit count
+
+#define X_START 30
+#define Y_START 30
 
 // BitButton and BitButton Label Geometry
 // ======================================
@@ -82,12 +85,11 @@ enum hexedit_t
 	hex_left, hex_right, hex_result, hex_array_size
 };
 
-
 #define	HE_W 200
 #define	HE_H 30
 
-#define	HE_LEFT_X 30
-#define	HE_LEFT_Y 30
+#define	HE_LEFT_X X_START
+#define	HE_LEFT_Y Y_START
 #define	HE_SKIP_W 38
 
 QT_BEGIN_NAMESPACE

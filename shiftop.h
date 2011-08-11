@@ -17,7 +17,6 @@ public:
 	ShiftBox(QWidget *parent=0);
 	//~ShiftBox();
 
-	void set_geometry(QRect& rect);
 
 private:
 	QFrame *frame_3;
@@ -25,15 +24,15 @@ private:
 
 /*////////////////////////////////////////////////////////////////////////////
 */
-class ShiftOp : public QWidget
+class ShiftOpGroup : public QWidget
 {
 	Q_OBJECT
 public:
-	explicit ShiftOp(QWidget *parent = 0);
+	explicit ShiftOpGroup(QPoint *start, QWidget *parent = 0);
 
 	ShiftBox *shiftBox;
 	ControlGroup <QPushButton> *pShiftButtons;
-
+	QCheckBox *chkRotate;
 
 	int getCurrentShiftVal();
 	void setCurrentShiftVal(int val);
@@ -45,6 +44,7 @@ public slots:
 
 private:
 	int	currentShiftVal;
+	Twidget *tw;			// Twidget for "<<" and ">>" PushButtons
 
 };
 

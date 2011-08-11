@@ -92,6 +92,7 @@ bits::bits(QWidget *parent)	:
 	init_heArray();		// : first be determined
 	init_invert();		// create the "invert" buttonsCcasd
 	init_shiftOp();
+	updateWinSizes();
 	showBits();
 
 }
@@ -219,12 +220,13 @@ void bits::bitSizeClick(int bitSize)
 	default: bf = bit_32; break;
 	}
 
-	quint64 qiBitsVal = getBits();
+	//quint64 qiBitsVal = getBits();
 	for (int index = 0; index < hex_array_size; index++)
 	{
 		ui->hexedit[index]->updateHexEditBitField(bf);
-		ui->hexedit[index]->updateHexEdit(qiBitsVal);
+		//ui->hexedit[index]->updateHexEdit(qiBitsVal);
 	}
+	updateWinSizes();
 	showBits();
 }
 
@@ -266,6 +268,8 @@ void bits::updateBits(int hexIndex)
 	quint64 hexVal = ui->hexedit[hexIndex]->hexstr2int(hexStr);
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
 
+	// Shift through the hexVal and set or clear the BitButtons accordingly.
+	//
 	for(int index = 0; index < binDigits; index++)
 	{
 		ui->bb[index]->setState(hexVal & 1);
@@ -382,17 +386,8 @@ quint64	bits::getBits()
 */
 void bits::showBits()
 {
-	// Frame dimensions
-	//
 	int hexIndex = ui->bbConnectGroup->checkedId();
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
-	bool large = binDigits > 32 ? true : false;
-
-	const int fx = 14;
-	const int fy = 190;
-	const int fw = 690;
-	int fh = large ? 110 : 60;
-	int wh = large ? MAINWINDOW_H + 50: MAINWINDOW_H;
 
 	for(int index = 0; index < BITS; index++)
 	{
@@ -407,8 +402,27 @@ void bits::showBits()
 			ui->bbLabel[index]->hide();
 		}
 	}
-	ui->bbFrame->setGeometry(QRect(fx, fy, fw, fh));
+}
 
+/*//////////////////////////////////////////////////////////////////////////////
+//
+// bits::updateWinSizes
+*/
+void bits::updateWinSizes()
+{
+	// Frame dimensions
+	//
+	int hexIndex = ui->bbConnectGroup->checkedId();
+	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
+	bool large = binDigits > 32 ? true : false;
+
+	const int fx = 14;
+	const int fy = 190;
+	const int fw = 690;
+	int fh = large ? 110 : 60;
+	int wh = large ? MAINWINDOW_H + 50: MAINWINDOW_H;
+
+	ui->bbFrame->setGeometry(QRect(fx, fy, fw, fh));
 	this->resize(MAINWINDOW_W, wh);
 	updateMessageBox();
 	showDecimals(getBits());
@@ -553,7 +567,7 @@ void bits::init_heArray()
 
 		left_y = HE_LEFT_Y - 24;
 		ObjName = "he_label_" % NameSubstr;
-		QString LabelName = index == hex_right ? "" : " Operand";
+		QString LabelName = index < hex_result ? " Operand" : "";
 		HEXMAC(hexeditLabel)->setObjectName(ObjName);
 		HEXMAC(hexeditLabel)->setGeometry(QRect(left_x, left_y, HE_W, HE_H));
 		HEXMAC(hexeditLabel)->setText(NameSubstr % LabelName);
@@ -647,8 +661,8 @@ void bits::init_bitSizes()
 	// by the ControlGroup to create the button control group.
 	// See controlgroup.h
 	//
-	const int x = 30;
-	const int y = 105;
+	const int x = X_START;
+	const int y = Y_START + 76;
 	const int i = 17;
 	const int w = 50;
 	const int h = 20;
@@ -710,7 +724,10 @@ void bits::init_invert()
 */
 void bits::init_shiftOp()
 {
-	shiftBox = new ShiftOp(ui->centralWidget);
+	const int x = X_START + 90;
+	const int y = Y_START + 78;
+	QPoint start = QPoint(x,y);
+	shiftOp = new ShiftOpGroup(&start, ui->centralWidget);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////

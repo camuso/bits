@@ -6,7 +6,7 @@ BitButton::BitButton(int number, QWidget *parent)
 {
 	bbId = number;
 
-	bbStyle[0] = "color: white; "
+	bbStyle[1] = "color: white; "
 				 "background-color: "
 					"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
 					"stop: 0 #08080a, stop: 1 #66777a); "
@@ -14,7 +14,7 @@ BitButton::BitButton(int number, QWidget *parent)
 				 "border-style: sunken; border-width: 2px; "
 				 "border-radius 6px; border-color: white; ";
 
-	bbStyle[1] = "color: black; background-color: aqua;"
+	bbStyle[0] = "color: black; background-color: aqua;"
 				 "background-color: "
 					"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
 					"stop: 0 #eaebfe, stop: 1 #76878a); "

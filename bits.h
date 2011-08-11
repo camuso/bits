@@ -66,6 +66,7 @@ private:
 	void updateBits(int hexIndex);
 	void updateEdits();
 	void updateMessageBox();
+	void updateWinSizes();
 	void showDecimals(quint64 val);
 	void sendMessage(QString& line, int level);
 	void showBits();
@@ -74,7 +75,7 @@ private:
 	ControlGroup <QRadioButton> *pBitSizes;
 	ControlGroup <QPushButton> *pInvert;
 	QFrame *bitSizeFrame;
-	ShiftOp *shiftBox;
+	ShiftOpGroup *shiftOp;
 };
 
 #endif // BITS_H
