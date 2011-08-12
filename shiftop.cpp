@@ -26,9 +26,9 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	shiftBox = new ShiftBox(parent);
 	shiftBox->setGeometry(x, y, sbw, sbh);
 	shiftBox->setObjectName("ShiftBox");
-	shiftBox->setInputMask("00");
-	shiftBox->setText(QString("1"));
-	currentShiftVal = 1;
+	shiftBox->setInputMask("   00 ");
+
+	setupText(QString("1"));
 
 	// Create the shift operator push buttons as a ControlGroup.
 	//
@@ -44,7 +44,7 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	tw->objText << "<<" << ">>";
 	tw->sizes   << QSize(shlw, shlh) << QSize(shlw, shlh);
 	tw->layout  << QPoint(shlx, shly) << QPoint(shrx, shly);
-	tw->grouped = false;
+	tw->grouped = true;
 	tw->labeled = false;
 	pShiftButtons = new ControlGroup <QPushButton>(tw, parent);
 
@@ -60,12 +60,30 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	chkRotate->setGeometry(crx, cry, crw, crh);
 	chkRotate->setText("Rotate");
 	chkRotate->show();
+
+	// Connect the signal from the shiftbuttons to the "shift" signal in this
+	// class.
+	// The parent class of this class will connect the "shift" signal from
+	// here to one of its slots. Because the signals are coming from a button
+	// group, they will be indexed and we will be able to determine wheter
+	// it was the left or right button that was pressed.
+	//
+	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(shift(int)));
+	connect(shiftBox, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
 }
 
 int ShiftOpGroup::getCurrentShiftVal() {return currentShiftVal;}
 void ShiftOpGroup::setCurrentShiftVal(int val) {currentShiftVal = val;}
 
-void ShiftOpGroup::onEditActivate()
+void ShiftOpGroup::onReturnPressed()
 {
+	bool ok;
+	QString text = shiftBox->text();
+	currentShiftVal = text.toInt(&ok);
+	setupText(text);
+}
 
+void ShiftOpGroup::setupText (QString& text)
+{
+	shiftBox->setText(QString("  " % text));
 }

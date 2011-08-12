@@ -36,11 +36,13 @@ public:
 
 	int getCurrentShiftVal();
 	void setCurrentShiftVal(int val);
+	void setupText (QString& text);
 
 signals:
+	void shift(int);
 
 public slots:
-	void onEditActivate();
+	void onReturnPressed();
 
 private:
 	int	currentShiftVal;

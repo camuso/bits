@@ -51,6 +51,7 @@ private	slots:
 	void shiftRadioClick(int);
 	void bitSizeClick(int);
 	void onInvert(int);
+	void onShift(int);
 
 private:
 	Ui::bits *ui;

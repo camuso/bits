@@ -181,18 +181,38 @@ void bits::bbRadioClick(int index)
 /*/////////////////////////////////////////////////////////////////////////////
 //
 // bits::mapped_shiftRadioClick
+//
+// . Connect the corresponding HexEdit box to the ShiftOpGroup.
 */
 void bits::shiftRadioClick(int)
 {
+	// I guess there's really nothing to do here, because the code that
+	// will do the shifting will examine the buttonGroup that contains
+	// these buttons to see which one is set. The HexEdit box that
+	// "owns" that button is the one that will be shifted by the shift
+	// operator group.
+}
 
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::onShift
+//
+// . Get the current value of the bits, shift it left or right, depending
+//   on the index, and update the HexEdit window that's connected to the
+//   shift button.
+*/
+void bits::onShift(int index)
+{
+	QString dirStr = index == 0 ? "Left" : "Right";
+	sendMessage(QString("Shifted " % dirStr), msg_notify);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
 //
 // bits::bitSizeClick
 //
-// The integer that's returned is the index of the clicked radio button int
-// the QList that contains it and the other QRadioButtons in this group.
+// The integer that's passed is the index of the clicked radio button in
+// the QList that contains the QRadioButtons in this group.
 // That index conveniently maps to the bitfield_t defined in bitfield.h
 // The bitfield width will control the number of BitButtons presented to
 // the user interface and the width of the fields in the HexEdit boxes.
@@ -200,7 +220,7 @@ void bits::shiftRadioClick(int)
 // On click, of any button in this group, we must do the following.
 // . In a loop, cycle through all the HexEdit boxes and call the
 //   hexBitField->setBitField routine.
-//.  Call updateHexEdit for each of the boxes.
+// . Call updateHexEdit for each of the boxes.
 //
 */
 void bits::bitSizeClick(int bitSize)
@@ -220,11 +240,9 @@ void bits::bitSizeClick(int bitSize)
 	default: bf = bit_32; break;
 	}
 
-	//quint64 qiBitsVal = getBits();
-	for (int index = 0; index < hex_array_size; index++)
+	for (int index = hex_left; index < hex_array_size; index++)
 	{
 		ui->hexedit[index]->updateHexEditBitField(bf);
-		//ui->hexedit[index]->updateHexEdit(qiBitsVal);
 	}
 	updateWinSizes();
 	showBits();
@@ -427,7 +445,6 @@ void bits::updateWinSizes()
 	updateMessageBox();
 	showDecimals(getBits());
 }
-
 
 /*//////////////////////////////////////////////////////////////////////////////
 //
@@ -728,6 +745,7 @@ void bits::init_shiftOp()
 	const int y = Y_START + 78;
 	QPoint start = QPoint(x,y);
 	shiftOp = new ShiftOpGroup(&start, ui->centralWidget);
+	connect(shiftOp, SIGNAL(shift(int)), this, SLOT(onShift(int)));
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
