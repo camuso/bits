@@ -72,6 +72,7 @@ private:
 	void sendMessage(QString& line, int level);
 	void showBits();
 	void hideBits();
+	void setPushButtonStyle();
 
 	ControlGroup <QRadioButton> *pBitSizes;
 	ControlGroup <QPushButton> *pInvert;

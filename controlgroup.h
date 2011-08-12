@@ -7,7 +7,9 @@
 #include <QtGui/QRadioButton>
 #include <QtGui/QButtonGroup>
 
-typedef void (*pSlot_t)(int);
+enum signal_t {st_clicked, st_pressed, st_released, st_activated};
+
+typedef	void (*pSlot_t)(int);
 
 /*
 ** class Twidget

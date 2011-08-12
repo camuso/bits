@@ -6,12 +6,12 @@ ShiftBox::ShiftBox(QWidget *parent) : QLineEdit(parent)
 	// object.
 	//
 	this->setFrame(false);
-	frame_3 = new QFrame(this);
-	frame_3->setObjectName(QString::fromUtf8("frame_3"));
-	frame_3->setFrameShape(QFrame::WinPanel);
-	frame_3->setFrameShadow(QFrame::Sunken);
-	//frame_3->setLineWidth(4);
-	//frame_3->setMidLineWidth(2);
+	shiftBoxFrame = new QFrame(this);
+	shiftBoxFrame->setObjectName(QString::fromUtf8("shiftBoxFrame"));
+	shiftBoxFrame->setFrameShape(QFrame::WinPanel);
+	shiftBoxFrame->setFrameShadow(QFrame::Sunken);
+	//shiftBoxFrame->setLineWidth(4);
+	//shiftBoxFrame->setMidLineWidth(2);
 }
 
 ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
@@ -28,7 +28,11 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	shiftBox->setObjectName("ShiftBox");
 	shiftBox->setInputMask("   00 ");
 
-	setupText(QString("1"));
+	// Set up the initial shift value and the edit box to display it.
+	//
+	currentShiftVal = 1;
+	QString text = QString("1");
+	setupText(text);
 
 	// Create the shift operator push buttons as a ControlGroup.
 	//
@@ -52,7 +56,7 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	//
 	const int crx = start->x();
 	const int cry = shly + shlh;
-	const int crw = 50;
+	const int crw = 70;
 	const int crh = 24;
 
 	chkRotate = new QCheckBox(parent);
@@ -85,5 +89,5 @@ void ShiftOpGroup::onReturnPressed()
 
 void ShiftOpGroup::setupText (QString& text)
 {
-	shiftBox->setText(QString("  " % text));
+	shiftBox->setText(QString("   " % text));
 }

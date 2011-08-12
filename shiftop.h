@@ -15,11 +15,9 @@ class ShiftBox : public QLineEdit
 
 public:
 	ShiftBox(QWidget *parent=0);
-	//~ShiftBox();
-
 
 private:
-	QFrame *frame_3;
+	QFrame *shiftBoxFrame;
 };
 
 /*////////////////////////////////////////////////////////////////////////////

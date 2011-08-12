@@ -94,7 +94,7 @@ bits::bits(QWidget *parent)	:
 	init_shiftOp();
 	updateWinSizes();
 	showBits();
-
+	setPushButtonStyle();
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -204,7 +204,8 @@ void bits::shiftRadioClick(int)
 void bits::onShift(int index)
 {
 	QString dirStr = index == 0 ? "Left" : "Right";
-	sendMessage(QString("Shifted " % dirStr), msg_notify);
+	QString msg = QString("Shifted " % dirStr);
+	sendMessage(msg, msg_notify);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -681,7 +682,7 @@ void bits::init_bitSizes()
 	const int x = X_START;
 	const int y = Y_START + 76;
 	const int i = 17;
-	const int w = 50;
+	const int w = 70;
 	const int h = 20;
 
 	Twidget *tw = new Twidget;
@@ -730,9 +731,10 @@ void bits::init_invert()
 	tw->labelText = NULL;
 	tw->sizes << QSize(w, h) << QSize(w, h) << QSize(w, h);
 	tw->layout << QPoint(x, y) << QPoint(x+inc, y) << QPoint(x+2*inc, y);
-	tw->grouped = false;  // These buttons are not grouped.
+	tw->grouped = true;
 	pInvert = new ControlGroup <QPushButton>(tw, ui->centralWidget);
-	connect(tw->mapper, SIGNAL(mapped(int)), this, SLOT(onInvert(int)));
+	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
+			this, SLOT(onInvert(int)));
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -782,6 +784,12 @@ void bits::init_messageBox()
 	ui->messages->setUpdatesEnabled(true);
 }
 
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::updateMessageBox()
+//
+// Simply re-size the dimensions of the Message Box.
+*/
 void bits::updateMessageBox()
 {
 	int index = ui->bbConnectGroup->checkedId();
@@ -796,6 +804,38 @@ void bits::updateMessageBox()
 	ui->messages->show();
 }
 
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::setPushButtonStyle
+//
+// This will set the style for all of the QPushButtons in this application.
+// Subclasses can override this style with style declarations of their own.
+//
+*/
+void bits::setPushButtonStyle()
+{
+	// Style sheet must be one big string.
+	//
+	QString style =
+		"QPushButton {"
+			"color: black; "
+			"background-color: "
+				"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+				"stop: 0 #eaebfe, stop: 1 #76878a); "
+			"border-style:outset;border-width:1px;"
+			"border-radius4px;border-color:black; }"
+
+		"QPushButton:pressed{"
+			"color: white; "
+			"background-color: "
+				"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+				"stop: 0 #08080a, stop: 1 #66777a); "
+			"border:6pxsolidwhite; "
+			"border-style:inset;border-width:1px;"
+			"border-radius6px;border-color:white;}";
+
+	setStyleSheet(style);
+}
 
 QString getSystem()
 {
