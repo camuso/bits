@@ -96,6 +96,7 @@ quint64 HexEdit::hexstr2int(QString& hexStr)
 	// string as base 16 (hexadecimal).
 	//
 	quint64 hexVal = hexStr.toULongLong(&ok, 16);
+	hexVal = maskHexVal(hexVal);
 	return hexVal;
 }
 
@@ -123,6 +124,7 @@ void HexEdit::updateHexEdit(quint64 hexVal)
 {
 	QString hexStr;
 
+	hexVal = maskHexVal(hexVal);
 	hexStr = int2hexstr(hexStr, hexVal);
 	this->setEditText(hexStr);
 
@@ -133,6 +135,7 @@ void HexEdit::updateHexEdit(quint64 hexVal)
 		prevHexStr = hexStr;
 	}
 }
+
 /*/////////////////////////////////////////////////////////////////////////////
 //
 // updateHexEditBitField (bitfiedl_t bf)
@@ -155,6 +158,21 @@ void HexEdit::updateHexEditBitField(bitfield_t bf)
 	this->lineEdit()->setInputMask(hexBitField->getCurrentBitMask());
 	quint64 hexVal = this->hexstr2int(hexStr);
 	this->updateHexEdit(hexVal);
+}
+
+quint64 HexEdit::getHexVal()
+{
+	QString hexStr = this->currentText();
+	quint64 hexVal = this->hexstr2int(hexStr);
+	return hexVal;
+}
+
+quint64 HexEdit::maskHexVal(quint64 hexVal)
+{
+	quint64 bitMask = 0xFFFFFFFFFFFFFFFF;
+	bitMask >>= (64 - this->hexBitField->getCurrentBinDigits());
+	quint64 newVal = hexVal & bitMask;
+	return newVal;
 }
 
 bool HexEdit::isNewData( quint64 numData) {return( numData != prevHexVal );}

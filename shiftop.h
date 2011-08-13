@@ -9,43 +9,28 @@
 
 /*////////////////////////////////////////////////////////////////////////////
 */
-class ShiftBox : public QLineEdit
-{
-	Q_OBJECT
-
-public:
-	ShiftBox(QWidget *parent=0);
-
-private:
-	QFrame *shiftBoxFrame;
-};
-
-/*////////////////////////////////////////////////////////////////////////////
-*/
 class ShiftOpGroup : public QWidget
 {
 	Q_OBJECT
 public:
 	explicit ShiftOpGroup(QPoint *start, QWidget *parent = 0);
 
-	ShiftBox *shiftBox;
+	QLineEdit *shiftBox;
 	ControlGroup <QPushButton> *pShiftButtons;
 	QCheckBox *chkRotate;
 
 	int getCurrentShiftVal();
 	void setCurrentShiftVal(int val);
-	void setupText (QString& text);
 
 signals:
 	void shift(int);
 
 public slots:
-	void onReturnPressed();
+	void onTextEdited(QString text);
 
 private:
 	int	currentShiftVal;
 	Twidget *tw;			// Twidget for "<<" and ">>" PushButtons
-
 };
 
 

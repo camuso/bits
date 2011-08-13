@@ -19,7 +19,7 @@ BitButton::BitButton(int number, QWidget *parent)
 					"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
 					"stop: 0 #eaebfe, stop: 1 #76878a); "
 				"border-style:outset;border-width:1px;"
-				"border-radius4px;border-color:black;";
+				"border-radius4px;border-color:gray;";
 
 	QFont font;
 #ifdef Q_WS_WIN

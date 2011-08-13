@@ -28,6 +28,8 @@ public:
 	void updateHexEditBitField(bitfield_t bf);
 	bool isNewData(quint64 numData);
 	bool isNewData(QString& strData);
+	quint64 getHexVal();
+	quint64 maskHexVal(quint64 hexVal);
 
 signals:
 

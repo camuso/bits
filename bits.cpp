@@ -92,9 +92,9 @@ bits::bits(QWidget *parent)	:
 	init_heArray();		// : first be determined
 	init_invert();		// create the "invert" buttonsCcasd
 	init_shiftOp();
+	setAppStyles();
 	updateWinSizes();
 	showBits();
-	setPushButtonStyle();
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -197,15 +197,67 @@ void bits::shiftRadioClick(int)
 //
 // bits::onShift
 //
-// . Get the current value of the bits, shift it left or right, depending
-//   on the index, and update the HexEdit window that's connected to the
-//   shift button.
+// . Get the current shift value from the shiftOp control group
+// . Get the current index of from the shiftConnectGroup, that is, which
+//   of the HexEdit windows is connected to the shifter through its "Shift"
+//   radio button.
+// . Get the current value of the HexEdit box that's connected to the
+//   shift control group through the shift radio button.
+// . Shift/Rotate right or left depending on the index value passed to us
+//   by the "clicked" signal from the shift control goup.
+// . If the shift radio button is connected to the same HexEdit box as the
+//   BitButton radio button, then update the bit buttons.
+// . Send messages and exit.
 */
 void bits::onShift(int index)
 {
-	QString dirStr = index == 0 ? "Left" : "Right";
-	QString msg = QString("Shifted " % dirStr);
+	int shiftVal = shiftOp->getCurrentShiftVal();
+	QString qsShiftVal;
+	qsShiftVal.setNum(shiftVal);
+
+	int shiftConnectIndex = ui->shiftConnectGroup->checkedId();
+	quint64 hexVal = ui->hexedit[shiftConnectIndex]->getHexVal();
+
+	if (shiftOp->chkRotate->checkState() == Qt::Unchecked)
+		hexVal = index == 0 ? hexVal << shiftVal : hexVal >> shiftVal;
+	else //Rotate
+	{
+		int binDigits =
+			ui->hexedit[shiftConnectIndex]->hexBitField->getCurrentBinDigits();
+
+		if (index == 0) // rotate left (ROL)
+		{
+			quint64 rotMask = (quint64)1 << (binDigits-1);
+			for (int j = 0; j < shiftVal; j++)
+			{
+				quint64 msb = hexVal & rotMask;
+				hexVal <<= 1;
+				msb >>= binDigits-1;
+				hexVal |= msb;
+			}
+		}
+		else // rotate right (ROR)
+		{
+			for (int j = 0; j < shiftVal; j++)
+			{
+				quint64 lsb = hexVal & 1;
+				hexVal >>= 1;
+				lsb <<= binDigits-1;
+				hexVal |= lsb;
+			}
+		}
+	}
+
+	ui->hexedit[shiftConnectIndex]->updateHexEdit(hexVal);
+
+	int bbConnectIndex = ui->bbConnectGroup->checkedId();
+	if (shiftConnectIndex == bbConnectIndex)
+		updateBits(shiftConnectIndex);
+
+	QString dirStr = index == 0 ? "Left by " : "Right by ";
+	QString msg = QString("Shifted " % dirStr % qsShiftVal);
 	sendMessage(msg, msg_notify);
+	showDecimals(getBits());
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -253,18 +305,21 @@ void bits::bitSizeClick(int bitSize)
 //
 // bits::onInvert - invert the value in the hex box
 //
+// . Get the unsigned 64-bit integer value of the hexadecimal string displayed
+//   in the hexedit box.
+// . Invert the integer
+// . Write the result back to the hexedit display.
+// . If the hexedit display is also connected to the BitButtons, then update
+//   them also.
+// . Show the decimal result.
 */
 void bits::onInvert(int index)
 {
-	QString hexStr = ui->hexedit[index]->currentText();
-	quint64 hexVal = ui->hexedit[index]->hexstr2int(hexStr);
-	int bbConnectIndex = ui->bbConnectGroup->checkedId();
-	quint64 bitMask = 0xFFFFFFFFFFFFFFFF;
-
-	bitMask >>= (64 - ui->hexedit[index]->hexBitField->getCurrentBinDigits());
+	quint64 hexVal = ui->hexedit[index]->getHexVal();
 	hexVal = ~hexVal;
-	hexVal &= bitMask;
 	ui->hexedit[ index ]->updateHexEdit(hexVal);
+
+	int bbConnectIndex = ui->bbConnectGroup->checkedId();
 	if(index == bbConnectIndex)
 		updateBits(index);
 	showDecimals(hexVal);
@@ -272,9 +327,12 @@ void bits::onInvert(int index)
 
 /*/////////////////////////////////////////////////////////////////////////////
 //
-// bits::updateBits(index)
+// bits::updateBits(hexIndex)
 //
-// Obtain the new value in the HexEdit box indicated by the hexIndex argument.
+// This routine updates the bits with the integer value of the hexadecimal
+// number displayed in the hexedit box given by the index parameter.
+//
+// Obtain the value in the HexEdit box indicated by the hexIndex argument.
 // Logic upstream from here should have checked that the BitButton array is
 // connected to the HexEdit QComboBox indicated by the hexIndex argument.
 //
@@ -283,8 +341,7 @@ void bits::onInvert(int index)
 */
 void bits::updateBits(int hexIndex)
 {
-	QString hexStr = ui->hexedit[hexIndex]->currentText();
-	quint64 hexVal = ui->hexedit[hexIndex]->hexstr2int(hexStr);
+	quint64 hexVal = ui->hexedit[hexIndex]->getHexVal();
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
 
 	// Shift through the hexVal and set or clear the BitButtons accordingly.
@@ -706,11 +763,6 @@ void bits::init_bitSizes()
 	pBitSizes->widgetList[2]->setChecked(true); // 32-bit button default
 	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
 			this, SLOT(bitSizeClick(int)));
-
-	//bitSizeFrame = new QFrame(ui->centralWidget);
-	//bitSizeFrame->setObjectName(QString::fromUtf8("frame"));
-	//bitSizeFrame->setGeometry(QRect(x-6, y-2, w+8, h*4));
-	//bitSizeFrame->setFrameShape(QFrame::StyledPanel );
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -812,7 +864,7 @@ void bits::updateMessageBox()
 // Subclasses can override this style with style declarations of their own.
 //
 */
-void bits::setPushButtonStyle()
+void bits::setAppStyles()
 {
 	// Style sheet must be one big string.
 	//
@@ -823,7 +875,7 @@ void bits::setPushButtonStyle()
 				"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
 				"stop: 0 #eaebfe, stop: 1 #76878a); "
 			"border-style:outset;border-width:1px;"
-			"border-radius4px;border-color:black; }"
+			"border-radius4px;border-color:gray; }"
 
 		"QPushButton:pressed{"
 			"color: white; "
@@ -832,10 +884,16 @@ void bits::setPushButtonStyle()
 				"stop: 0 #08080a, stop: 1 #66777a); "
 			"border:6pxsolidwhite; "
 			"border-style:inset;border-width:1px;"
-			"border-radius6px;border-color:white;}";
+			"border-radius6px;border-color:white;}"
+
+		"QLineEdit {"
+			"color: black; "
+			"border-style:inset;border-width:2px;"
+			"border-radius4px;border-color:gray; }";
 
 	setStyleSheet(style);
 }
+
 
 QString getSystem()
 {

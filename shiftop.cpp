@@ -1,29 +1,17 @@
 #include "shiftop.h"
 
-ShiftBox::ShiftBox(QWidget *parent) : QLineEdit(parent)
-{
-	// Turn-off the built-in frame so we can create a custom frame for this
-	// object.
-	//
-	this->setFrame(false);
-	shiftBoxFrame = new QFrame(this);
-	shiftBoxFrame->setObjectName(QString::fromUtf8("shiftBoxFrame"));
-	shiftBoxFrame->setFrameShape(QFrame::WinPanel);
-	shiftBoxFrame->setFrameShadow(QFrame::Sunken);
-	//shiftBoxFrame->setLineWidth(4);
-	//shiftBoxFrame->setMidLineWidth(2);
-}
-
+/*////////////////////////////////////////////////////////////////////////////
+*/
 ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	QWidget(parent)
 {
-	const int x = start->x();
+	const int x = start->x()+7;
 	const int y = start->y();
-	const int sbw = 48;
+	const int sbw = 38;
 	const int sbh = 26;
 	const int margin = 3;
 
-	shiftBox = new ShiftBox(parent);
+	shiftBox = new QLineEdit(parent);
 	shiftBox->setGeometry(x, y, sbw, sbh);
 	shiftBox->setObjectName("ShiftBox");
 	shiftBox->setInputMask("   00 ");
@@ -32,7 +20,7 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	//
 	currentShiftVal = 1;
 	QString text = QString("1");
-	setupText(text);
+	shiftBox->setText(text);
 
 	// Create the shift operator push buttons as a ControlGroup.
 	//
@@ -72,22 +60,16 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	// group, they will be indexed and we will be able to determine wheter
 	// it was the left or right button that was pressed.
 	//
-	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(shift(int)));
-	connect(shiftBox, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
+	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
+			this, SIGNAL(shift(int)));
+	connect(shiftBox, SIGNAL(textEdited(QString)),
+			this, SLOT(onTextEdited(QString)));
 }
 
 int ShiftOpGroup::getCurrentShiftVal() {return currentShiftVal;}
-void ShiftOpGroup::setCurrentShiftVal(int val) {currentShiftVal = val;}
 
-void ShiftOpGroup::onReturnPressed()
+void ShiftOpGroup::onTextEdited(QString text)
 {
 	bool ok;
-	QString text = shiftBox->text();
 	currentShiftVal = text.toInt(&ok);
-	setupText(text);
-}
-
-void ShiftOpGroup::setupText (QString& text)
-{
-	shiftBox->setText(QString("   " % text));
 }
