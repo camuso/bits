@@ -62,7 +62,6 @@
 //
 //=============================================================================*/
 
-//#include "ui_bits.h"
 #include "bits.h"
 
 #define Init_1(x) ui->x->
@@ -83,6 +82,9 @@ bits::bits(QWidget *parent)	:
 {
 	ui->setupUi(this);
 
+	setFocusPolicy(Qt::StrongFocus);
+	setFocus();
+
 	ui->bbConnectGroup = new QButtonGroup(ui->centralWidget);
 	ui->shiftConnectGroup = new QButtonGroup(ui->centralWidget);
 
@@ -92,6 +94,7 @@ bits::bits(QWidget *parent)	:
 	init_heArray();		// : first be determined
 	init_invert();		// create the "invert" buttonsCcasd
 	init_shiftOp();
+	init_calc();
 	setAppStyles();
 	updateWinSizes();
 	showBits();
@@ -154,11 +157,11 @@ void bits::mapped_hexedit(int index)
 	QString currentText = QString(ui->hexedit[index]->currentText());
 
 	if(ui->hexedit[index]->isNewData(currentText)
-	&&(ui->bbConnectGroup->checkedId() == index))
-	{
+	&&(ui->bbConnectGroup->checkedId() == index)) {
 		updateBits(index);
 		showDecimals(getBits());
 	}
+	this->setFocus();
 }
 
 /*//////////////////////////////////////////////////////////////////////////////
@@ -195,7 +198,7 @@ void bits::shiftRadioClick(int)
 
 /*/////////////////////////////////////////////////////////////////////////////
 //
-// bits::onShift
+// bits::onShift(index) - index is the id of the shift button
 //
 // . Get the current shift value from the shiftOp control group
 // . Get the current index of from the shiftConnectGroup, that is, which
@@ -220,26 +223,21 @@ void bits::onShift(int index)
 
 	if (shiftOp->chkRotate->checkState() == Qt::Unchecked)
 		hexVal = index == 0 ? hexVal << shiftVal : hexVal >> shiftVal;
-	else //Rotate
-	{
+	else {	//Rotate
 		int binDigits =
 			ui->hexedit[shiftConnectIndex]->hexBitField->getCurrentBinDigits();
 
-		if (index == 0) // rotate left (ROL)
-		{
+		if (index == 0) {	// rotate left (ROL)
 			quint64 rotMask = (quint64)1 << (binDigits-1);
-			for (int j = 0; j < shiftVal; j++)
-			{
+			for (int j = 0; j < shiftVal; j++) {
 				quint64 msb = hexVal & rotMask;
 				hexVal <<= 1;
 				msb >>= binDigits-1;
 				hexVal |= msb;
 			}
 		}
-		else // rotate right (ROR)
-		{
-			for (int j = 0; j < shiftVal; j++)
-			{
+		else {	// rotate right (ROR)
+			for (int j = 0; j < shiftVal; j++) {
 				quint64 lsb = hexVal & 1;
 				hexVal >>= 1;
 				lsb <<= binDigits-1;
@@ -254,10 +252,77 @@ void bits::onShift(int index)
 	if (shiftConnectIndex == bbConnectIndex)
 		updateBits(shiftConnectIndex);
 
-	QString dirStr = index == 0 ? "Left by " : "Right by ";
-	QString msg = QString("Shifted " % dirStr % qsShiftVal);
-	sendMessage(msg, msg_notify);
+	//QString dirStr = index == 0 ? "Left by " : "Right by ";
+	//QString msg = QString("Shifted " % dirStr % qsShiftVal);
+	//sendMessage(msg, msg_notify);
 	showDecimals(getBits());
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::onCalc
+//
+// Push Button map
+//
+//
+*/
+void bits::onCalc(int index)
+{
+	quint64 op1 = ui->hexedit[hex_left]->getHexVal();
+	quint64 op2 = ui->hexedit[hex_right]->getHexVal();
+	quint64 res;
+
+	// Check for attempted division by zero.
+	//
+	if(op2 == 0 && ((index == calc_div ) || (index == calc_mod))) {
+		QString div0 = "Attempted division by zero - no result.";
+		sendMessage(div0, msg_alert);
+		return;
+	}
+	switch(index) {
+	case calc_and: res = op1 & op2; break;
+	case calc_or:  res = op1 | op2; break;
+	case calc_xor: res = op1 ^ op2; break;
+	case calc_add: res = op1 + op2; break;
+	case calc_sub: res = op1 - op2; break;
+	case calc_mul: res = op1 * op2; break;
+	case calc_div: res = op1 / op2; break;
+	case calc_mod: res = op1 % op2; break;
+	}
+	ui->hexedit[hex_result]->updateHexEdit(res);
+
+	int bbConnectIndex = ui->bbConnectGroup->checkedId();
+	if(bbConnectIndex == hex_result)
+		this->updateBits(hex_result);
+
+	this->showDecimals(res);
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::kePressEvent
+//
+// Intercepts keys looking for operators.
+//
+//
+*/
+void bits::keyPressEvent(QKeyEvent *event)
+{
+	switch (event->key()) {
+	case Qt::Key_Left: onShift(0); break;
+	case Qt::Key_Right: onShift(1); break;
+	case Qt::Key_Less: onShift(0); break;
+	case Qt::Key_Greater: onShift(1); break;
+	case Qt::Key_Ampersand: onCalc(calc_and); break;
+	case Qt::Key_Bar: onCalc(calc_or); break;
+	case Qt::Key_AsciiCircum: onCalc(calc_xor); break;
+	case Qt::Key_Plus: onCalc(calc_add); break;
+	case Qt::Key_Minus: onCalc(calc_sub); break;
+	case Qt::Key_Asterisk: onCalc(calc_mul); break;
+	case Qt::Key_Slash: onCalc(calc_div); break;
+	case Qt::Key_Percent: onCalc(calc_mod); break;
+	default:QWidget::keyPressEvent(event); break;
+	}
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -284,8 +349,7 @@ void bits::bitSizeClick(int bitSize)
 	// Paranoia is good in this business.
 	//
 	bitfield_t bf;
-	switch (bitSize)
-	{
+	switch (bitSize) {
 	case 0: bf = bit_8; break;
 	case 1: bf = bit_16; break;
 	case 2: bf = bit_32; break;
@@ -294,9 +358,8 @@ void bits::bitSizeClick(int bitSize)
 	}
 
 	for (int index = hex_left; index < hex_array_size; index++)
-	{
 		ui->hexedit[index]->updateHexEditBitField(bf);
-	}
+
 	updateWinSizes();
 	showBits();
 }
@@ -346,8 +409,7 @@ void bits::updateBits(int hexIndex)
 
 	// Shift through the hexVal and set or clear the BitButtons accordingly.
 	//
-	for(int index = 0; index < binDigits; index++)
-	{
+	for(int index = 0; index < binDigits; index++) {
 		ui->bb[index]->setState(hexVal & 1);
 		hexVal >>= 1;
 	}
@@ -373,6 +435,15 @@ void bits::updateBits(int hexIndex)
 */
 void bits::showDecimals(quint64 val)
 {
+	static quint64 prevHexVal = 0;
+
+	// If nothing's changed, no need to print anything.
+	//
+	if (val == prevHexVal)
+		return;
+
+	prevHexVal = val;
+
 	QString signedVal;
 	int index = ui->bbConnectGroup->checkedId();
 	bitfield_t bf = ui->hexedit[index]->hexBitField->getCurrentBitField();
@@ -385,8 +456,7 @@ void bits::showDecimals(quint64 val)
 	qint32 sint_32 = (qint32)val & (qint32)0xFFFFFFFF;
 	qint64 sint_64 = (qint64)val & (qint64)0xFFFFFFFFFFFFFFFF;
 
-	switch(bf)
-	{
+	switch(bf) {
 	case bit_8:  signedVal = QString("%1").arg(sint_8); break;
 	case bit_16: signedVal = QString("%1").arg(sint_16); break;
 	case bit_32: signedVal = QString("%1").arg(sint_32); break;
@@ -422,8 +492,7 @@ void bits::sendMessage(QString& line, int level)
 	QString infoHtml = "<font color=\"Aqua\">";
 	QString endHtml = "</font><br>";
 
-	switch(level)
-	{
+	switch(level) {
 		case msg_alert: line = alertHtml % line; break;
 		case msg_notify: line = notifyHtml % line; break;
 		case msg_info: line = infoHtml % line; break;
@@ -448,8 +517,7 @@ quint64	bits::getBits()
 	int hexIndex = ui->bbConnectGroup->checkedId();
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
 
-	for(int index = 0; index < binDigits; index++)
-	{
+	for(int index = 0; index < binDigits; index++) {
 		quint64	bbState	= ui->bb[index]->bbState;
 		bitVal |= (bbState << index);
 	}
@@ -465,15 +533,12 @@ void bits::showBits()
 	int hexIndex = ui->bbConnectGroup->checkedId();
 	int binDigits = ui->hexedit[hexIndex]->hexBitField->getCurrentBinDigits();
 
-	for(int index = 0; index < BITS; index++)
-	{
-		if(index < binDigits)
-		{
+	for(int index = 0; index < BITS; index++) {
+		if(index < binDigits) {
 			ui->bb[index]->show();
 			ui->bbLabel[index]->show();
 		}
-		else
-		{
+		else {
 			ui->bb[index]->hide();
 			ui->bbLabel[index]->hide();
 		}
@@ -500,8 +565,8 @@ void bits::updateWinSizes()
 
 	ui->bbFrame->setGeometry(QRect(fx, fy, fw, fh));
 	this->resize(MAINWINDOW_W, wh);
-	updateMessageBox();
 	showDecimals(getBits());
+	updateMessageBox();
 }
 
 /*//////////////////////////////////////////////////////////////////////////////
@@ -736,20 +801,18 @@ void bits::init_bitSizes()
 	// by the ControlGroup to create the button control group.
 	// See controlgroup.h
 	//
-	const int x = X_START;
-	const int y = Y_START + 76;
-	const int i = 17;
+	const int x = X_START;		// x-coordinate
+	const int y = Y_START + 76;	// y-coordinate
+	const int i = 17;			// vert span
 	const int w = 70;
 	const int h = 20;
 
+	LAYOUT(x,y,0,i);			// x-coord, y-coord, horiz-span, vert-span
 	Twidget *tw = new Twidget;
-	tw->objCount = 4;
 	tw->objName = "bitsizes";
 	tw->objText << "8-bit" << "16-bit" << "32-bit" << "64-bit";
-	tw->labelText = NULL;
-	tw->sizes << QSize(w, h) << QSize(w, h) << QSize(w, h) << QSize(w, h);
-	tw->layout << QPoint(x, y)       << QPoint(x, y + i)
-			   << QPoint(x, y + 2*i) << QPoint(x, y + 3*i);
+	tw->sizes   << QSize(w, h);
+	tw->layout  << POINT(0,0) << POINT(0,1) << POINT(0,2) << POINT(0,3);
 	tw->grouped = true;
 
 	// . Create the new ControlGroup for bit width
@@ -771,18 +834,17 @@ void bits::init_bitSizes()
 */
 void bits::init_invert()
 {
-	const int x = 210;
-	const int y = 64;
-	const int inc = HE_W + HE_SKIP_W;
+	const int x = X_START + 180;		// x-coordinate
+	const int y = Y_START + 34;			// y-coordinate
+	const int inc = HE_W + HE_SKIP_W;	// horizontal span
 	const int w = 20;
 	const int h = 20;
+	LAYOUT(x, y, inc, 0)				// x, y, horiz-span, vertical-span
 	Twidget *tw = new Twidget;
-	tw->objCount = 3;
 	tw->objName = "invert";
 	tw->objText << "~" << "~" << "~";
-	tw->labelText = NULL;
-	tw->sizes << QSize(w, h) << QSize(w, h) << QSize(w, h);
-	tw->layout << QPoint(x, y) << QPoint(x+inc, y) << QPoint(x+2*inc, y);
+	tw->sizes   << QSize(w, h);
+	tw->layout  << POINT(0,0) << POINT(1,0) << POINT(2,0);
 	tw->grouped = true;
 	pInvert = new ControlGroup <QPushButton>(tw, ui->centralWidget);
 	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
@@ -795,11 +857,38 @@ void bits::init_invert()
 */
 void bits::init_shiftOp()
 {
-	const int x = X_START + 90;
+	const int x = X_START + 146;
 	const int y = Y_START + 78;
 	QPoint start = QPoint(x,y);
 	shiftOp = new ShiftOpGroup(&start, ui->centralWidget);
 	connect(shiftOp, SIGNAL(shift(int)), this, SLOT(onShift(int)));
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::init_calc
+*/
+void bits::init_calc()
+{
+	const int x = X_START + 146 + 152;	// x-coordinate
+	const int y = Y_START + 76;			// y-coordinate
+	const int w = 24;					// horizontal span
+	const int h = 24;					// vertical span
+
+	LAYOUT(x, y, w, h)					// x, y, horiz-span, vertical-span
+	Twidget *tw = new Twidget;
+	tw->objName = "calc";
+	tw->objText << "&&"  << "|"  << "^"
+				<< "+"           << "-"
+				<< "*"   << "/"  << "%";
+	tw->sizes	<< QSize(w, h);
+	tw->layout	<< POINT(0, 0) << POINT(1, 0) << POINT(2, 0)
+				<< POINT(0, 1)                << POINT(2, 1)
+				<< POINT(0, 2) << POINT(1, 2) << POINT(2, 2);
+
+	pCalc = new ControlGroup <QPushButton>(tw, ui->centralWidget);
+	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
+			this, SLOT(onCalc(int)));
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -894,7 +983,6 @@ void bits::setAppStyles()
 	setStyleSheet(style);
 }
 
-
 QString getSystem()
 {
 #ifdef Q_WS_X11
@@ -917,4 +1005,3 @@ return QString("Windows");
 
 #undef Init_1
 #undef Init_2
-

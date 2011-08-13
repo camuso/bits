@@ -32,12 +32,10 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 
 	tw = new Twidget;
 	tw->objName = QString("shifters");
-	tw->objCount = 2;
 	tw->objText << "<<" << ">>";
-	tw->sizes   << QSize(shlw, shlh) << QSize(shlw, shlh);
+	tw->sizes   << QSize(shlw, shlh);
 	tw->layout  << QPoint(shlx, shly) << QPoint(shrx, shly);
 	tw->grouped = true;
-	tw->labeled = false;
 	pShiftButtons = new ControlGroup <QPushButton>(tw, parent);
 
 	// Create the Rotate checkbox

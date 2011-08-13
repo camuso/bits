@@ -34,10 +34,11 @@ typedef	void (*pSlot_t)(int);
 ** objCount		- the number of objects to be created
 ** objText		- QList of strings to be displayed on each object.
 ** sizes		- QList of QSize gives height & width of each object in pixels.
+**				  A single-item list means they are all the same size
 ** layout		- QList of QPoint for the location of each object in pixels.
 ** labelNames	- *char[] array of strings to be displayed on each label.
+**				- An empty list indicates no labels.
 ** grouped		- if true, button clicked will be mutually exclusive
-** labeled		- if true, then there are labels for each object
 ** labelText	- *char[] array of strings for each label
 ** labelSizes	- QList of QSize for height and width of each label
 ** labelLayout	- QList of QPoint for the label layout
@@ -61,17 +62,14 @@ public:
 	// These fields are must be initialized by the caller to ControlGroup
 	//
 	QString objName;			// stem object name of widget
-	int objCount;				// Number of widgets
 	QList <QString> objText;	// text displayed on objects,
 	QList <QSize> sizes;		// A list of sizes for the objects
 	QList <QPoint> layout;		// A list of locations for the objects
 	bool grouped;				// group these in a QButtonGroup
-	bool labeled;				// separate labels
-	const char** labelText;		// Text displayed labels
+	QList <QString> labelText;	// Text displayed labels
 	QList <QSize> labelSizes;	// list of sizes for the labels
 	QList <QPoint> labelLayout;	// A list of locations for the objects
 	QList <pSlot_t> slotList;	// list of the caller's slot function pointers
-
 	//
 	// These fields will be initialized by ControlGroup
 	//
@@ -108,8 +106,6 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 	m_tw = tw;
 	m_parent = parent;
 
-	tw->mapper = new QSignalMapper(parent);
-
 	// See if the caller wants a QButtonGroup. That would make these buttons
 	// mutually exclusive.
 	// The QButtonGroup emits a signal with the ID of the checked button for
@@ -120,7 +116,9 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 	else
 		tw->mapper = new QSignalMapper(parent);
 
-	for (int index = 0; index < tw->objCount; index++)
+	int objCount = tw->layout.size();
+
+	for (int index = 0; index < objCount; index++)
 	{
 		T *object = new T(parent);
 		widgetList.append((T *)object);
@@ -133,8 +131,17 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 
 		int x = tw->layout[index].x();
 		int y = tw->layout[index].y();
-		int width = tw->sizes[index].width();
-		int height = tw->sizes[index].height();
+
+		// If the caller only passes one size, then one size fits all.
+		// Be sure that we can only index to the zeroth element of the
+		// tw->sizes QList. When there is only one item in there, trying
+		// to index beyond that throws an access violation, as well it
+		// should.
+		//
+		int sizeIndex = (tw->sizes.size() == 1) ? 0 : index;
+		int width = tw->sizes[sizeIndex].width();
+		int height = tw->sizes[sizeIndex].height();
+
 		object->setGeometry(x, y, width, height);
 
 		// If the buttons are grouped, the buttonGroup will send signals.

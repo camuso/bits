@@ -53,6 +53,7 @@
 // ====================
 #define	MAINWINDOW_W 716
 #define	MAINWINDOW_H 360
+//#define	MAINWINDOW_H 260
 
 #define INIT_BITSIZE 32		// The default bit count
 
@@ -85,6 +86,7 @@ enum hexedit_t
 	hex_left, hex_right, hex_result, hex_array_size
 };
 
+
 #define	HE_W 200
 #define	HE_H 30
 
@@ -108,7 +110,7 @@ public:
 	QButtonGroup *bbConnectGroup;
 	QButtonGroup *shiftConnectGroup;
 
-	//QMenuBar *menuBar;
+	QMenuBar *menuBar;
 	//QToolBar *mainToolBar;
 	//QStatusBar *statusBar;
 
@@ -122,12 +124,12 @@ public:
 		centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
 
 		bits->setCentralWidget(centralWidget);
-#if 0
+
 		menuBar	= new QMenuBar(bits);
 		menuBar->setObjectName(QString::fromUtf8("menuBar"));
 		menuBar->setGeometry(QRect(0, 0, 760, 20));
 		bits->setMenuBar(menuBar);
-
+#if 0
 		mainToolBar	= new QToolBar(bits);
 		mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
 		bits->addToolBar(Qt::TopToolBarArea, mainToolBar);
