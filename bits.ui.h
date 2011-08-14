@@ -47,7 +47,8 @@
 #include "controlgroup.h"
 #include "shiftop.h"
 
-#define	QT_USE_FAST_CONCATENATION	// use % instead of	+ for string concatenation
+#define QT_USE_FAST_CONCATENATION	// use % instead of + for
+									// string concatenation
 
 // Main	Window Geometry
 // ====================

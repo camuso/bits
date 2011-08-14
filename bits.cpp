@@ -270,7 +270,7 @@ void bits::onCalc(int index)
 {
 	quint64 op1 = ui->hexedit[hex_left]->getHexVal();
 	quint64 op2 = ui->hexedit[hex_right]->getHexVal();
-	quint64 res;
+		quint64 res = 0;
 
 	// Check for attempted division by zero.
 	//
@@ -461,6 +461,11 @@ void bits::showDecimals(quint64 val)
 	case bit_16: signedVal = QString("%1").arg(sint_16); break;
 	case bit_32: signedVal = QString("%1").arg(sint_32); break;
 	case bit_64: signedVal = QString("%1").arg(sint_64); break;
+		//
+		// The only reason this is here is thatthe compiler complained that
+		// we weren't handling it.
+		//
+		case bitfield_array_size: return;
 	}
 
 	// Let's see if this is a negative number. It's ok if we do it in
@@ -618,8 +623,8 @@ void bits::init_bbArray()
 
 		QString	bbName = "bb_" % QString::number(index);
 
-		// Instantiate the BitButton and connect it	to the ui (User	Interface)
-		// which is	the	Main Window.
+		// Instantiate the BitButton and connect it to the ui (User
+				// Interface) which is the Main Window.
 		//
 		ui->bb[index] =	new	BitButton(index, ui->centralWidget);
 		ui->bb[index]->setObjectName(bbName);
@@ -634,17 +639,17 @@ void bits::init_bbArray()
 		QString	bbLabelName	= "bb_label_" %	QString::number(index);
 		ui->bbLabel[index]->setObjectName(bbLabelName);
 
-		// Calculate the x and y coordinates of	the	BitButton's	label based	on
-		// the x and y coordinates of the BitButton
+		// Calculate the x and y coordinates of	the BitButton's label
+				// based on the x and y coordinates of the BitButton
 		//
-		int	bb_label_x = bb_x +	3;
-		int	bb_label_y = bb_y -	BB_H + (row	* 2	* BB_H);
+		int bb_label_x = bb_x + 3;
+		int bb_label_y = bb_y -	BB_H +  (row * 2 * BB_H);
 
 		// Place the bbLabel onto the ui (user interface), set its Font, and
 		// write the text into the label.
 		//
 		ui->bbLabel[index]->setGeometry(
-					QRect(bb_label_x, bb_label_y, BB_LABEL_W, BB_LABEL_H));
+			QRect(bb_label_x, bb_label_y, BB_LABEL_W, BB_LABEL_H));
 		ui->bbLabel[index]->setFont(QFont("Arial", 9, QFont::Bold));
 		ui->bbLabel[index]->setText(QString("%1").arg(index, 2));
 
@@ -654,7 +659,7 @@ void bits::init_bbArray()
 		//
 		bbMapper->setMapping(ui->bb[index],	index);
 
-		// Connect the BitButton bbClicked signal to the bbMapper's	one	and
+		// Connect the BitButton bbClicked signal to the bbMapper's one and
 		// only	slot, mapp().
 		//
 		connect(ui->bb[index], SIGNAL(clicked()), bbMapper,	SLOT(map()));
@@ -886,7 +891,8 @@ void bits::init_calc()
 				<< POINT(0, 1)                << POINT(2, 1)
 				<< POINT(0, 2) << POINT(1, 2) << POINT(2, 2);
 
-	pCalc = new ControlGroup <QPushButton>(tw, ui->centralWidget);
+        tw->grouped = true;
+        pCalc = new ControlGroup <QPushButton>(tw, ui->centralWidget);
 	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
 			this, SLOT(onCalc(int)));
 }
