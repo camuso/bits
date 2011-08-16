@@ -6,6 +6,8 @@
 #include <QtGui/QWidget>
 #include <QtGui/QRadioButton>
 #include <QtGui/QButtonGroup>
+//#include <QtGlobal>
+//#include <QtDebug>
 
 enum signal_t {st_clicked, st_pressed, st_released, st_activated};
 
@@ -123,14 +125,19 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 		T *object = new T(parent);
 		widgetList.append((T *)object);
 
-		// Layout the objects according to the Table Configuration given by
-		// the "topology" field in the Twidget struct.
+		// Create the objectName out of the text passed in a QString by the
+		// caller and the index of the object in the QList tw->layout.size.
 		//
 		object->setObjectName(QString(tw->objName % QString::number(index)));
-		object->setText(tw->objText[index]);
 
-		int x = tw->layout[index].x();
-		int y = tw->layout[index].y();
+		// If the caller only passes one label text string, then be sure that
+		// we can only index to the zeroth element of the tw->objText QList.
+		//
+		int textIndex = (tw->objText.size()) == 1 ? 0 : index;
+		QString objText = tw->objText[textIndex];
+		object->setText(objText);
+		//qDebug() << "textIndex: " << textIndex << " objText: "
+		//		 << qPrintable(objText);
 
 		// If the caller only passes one size, then one size fits all.
 		// Be sure that we can only index to the zeroth element of the
@@ -142,6 +149,11 @@ void ControlGroup<T>::init( Twidget *tw, QWidget *parent )
 		int width = tw->sizes[sizeIndex].width();
 		int height = tw->sizes[sizeIndex].height();
 
+		// Layout the objects according to the Table Configuration given by
+		// the "topology" field in the Twidget struct.
+		//
+		int x = tw->layout[index].x();
+		int y = tw->layout[index].y();
 		object->setGeometry(x, y, width, height);
 
 		// If the buttons are grouped, the buttonGroup will send signals.

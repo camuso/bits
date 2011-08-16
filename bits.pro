@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     bits.cpp \
     bitfield.cpp \
     BitButton.cpp \
-    shiftop.cpp
+    shiftop.cpp \
+    formatgroup.cpp
 
 HEADERS  += \
     dummy.h \
@@ -26,7 +27,8 @@ HEADERS  += \
     bitfield.h \
     BitButton.h \
     hexedit.h \
-    shiftop.h
+    shiftop.h \
+    formatgroup.h
 
 FORMS    += \
     bits.ui

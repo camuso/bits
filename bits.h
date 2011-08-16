@@ -28,24 +28,44 @@
 #include "hexedit.h"
 #include "controlgroup.h"
 
-// Convenient Macros are for placing objects in columns and rows.
+// Convenient Macros for placing objects in columns and rows.
 // It's probably better to just use QLayout, but this is what we've got
 // for now.
 //
-// x = x starting point
-// y = y starting point
-// hs = horizontal span
-// vs = vertical span
+// LAYOUT - takes the x any coordinates in pixels relative to the upper left
+//          corner of the window on which the widget will be placed. In this
+//          case, the MainWindow.
+//
+// x = x starting point - pixel x-coordinate of upper left corner of widget
+//                        relative to upper left corner of the window upon
+//                        which it is placed.
+// y = y starting point - y coordinate of upper left corner of widget.
+// hs = horizontal span - Distance in pixels to the next widget to the right
+//                        in the layout. Zero here indicates the layout is
+//                        vertical.
+// vs = vertical span   - Distance in pixels to the next widget below in the
+//                        layout. Zero here indicates the layout is horizontal.
 //
 #define LAYOUT(x,y,hs,vs) \
 	const int _Lx = x; \
 	const int _Ly = y; \
 	const int _Lhs = hs; \
 	const int _Lvs = vs;
+
+// This macro allows us to use "column,row" placement of widgets, once the
+// LAYOUT macro is called to express the layout in pixels. The POINT macro
+// takes the const int definitions made by LAYOUT and converts them to
+// pixel coordinates in a QPoint. All the user has to do is indicate which
+// column,row for the widget, wich makes layout a lot easier.
+//
 #define POINT(c, r) QPoint((_Lx + (c * _Lhs)), (_Ly + (r * _Lvs)))
 
+// Message types, each associated with its own color.
+//
 enum {msg_info, msg_notify, msg_alert};
 
+// Enumeration of the calculator buttons.
+//
 enum {calc_and, calc_or, calc_xor,
 	  calc_add,           calc_sub,
 	  calc_mul, calc_div, calc_mod};
@@ -74,6 +94,7 @@ private	slots:
 	void onInvert(int);
 	void onShift(int);
 	void onCalc (int);
+	void onFormat(int);
 
 private:
 	Ui::bits *ui;
@@ -86,6 +107,7 @@ private:
 	void init_invert();
 	void init_shiftOp();
 	void init_calc();
+	void init_format();
 	void keyPressEvent(QKeyEvent *event);
 	QString& dec2hex(quint64 qiNumber);
 	void updateBits(int hexIndex);
@@ -103,6 +125,7 @@ private:
 	QFrame *bitSizeFrame;
 	ShiftOpGroup *shiftOp;
 	ControlGroup <QPushButton> *pCalc;
+	ControlGroup <QRadioButton> *pConnectFormat;
 };
 
 #endif // BITS_H

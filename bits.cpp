@@ -95,6 +95,7 @@ bits::bits(QWidget *parent)	:
 	init_invert();		// create the "invert" buttonsCcasd
 	init_shiftOp();
 	init_calc();
+	init_format();
 	setAppStyles();
 	updateWinSizes();
 	showBits();
@@ -386,6 +387,11 @@ void bits::onInvert(int index)
 	if(index == bbConnectIndex)
 		updateBits(index);
 	showDecimals(hexVal);
+}
+
+void bits::onFormat(int)
+{
+
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -726,13 +732,13 @@ void bits::init_heArray()
 		ObjName = "he_bits_rb_" % NameSubstr;
 		HEXMAC(hexbits)->setObjectName(ObjName);
 		HEXMAC(hexbits)->setGeometry(QRect(left_x, left_y, HE_W, HE_H));
-		HEXMAC(hexbits)->setText(QString("Bit Buttons"));
+		HEXMAC(hexbits)->setText(QString("Bits"));
 
-		left_y += 18;
+		left_y += 17;
 		ObjName = "he_shift_rb_" % NameSubstr;
 		HEXMAC(hexshift)->setObjectName(ObjName);
 		HEXMAC(hexshift)->setGeometry(QRect(left_x, left_y, HE_W, HE_H));
-		HEXMAC(hexshift)->setText(QString("Shift Button"));
+		HEXMAC(hexshift)->setText(QString("Shift"));
 
 		ui->bbConnectGroup->addButton(HEXMAC(hexbits), index);
 		ui->shiftConnectGroup->addButton(HEXMAC(hexshift), index);
@@ -840,7 +846,7 @@ void bits::init_bitSizes()
 void bits::init_invert()
 {
 	const int x = X_START + 180;		// x-coordinate
-	const int y = Y_START + 34;			// y-coordinate
+	const int y = Y_START - 24;			// y-coordinate
 	const int inc = HE_W + HE_SKIP_W;	// horizontal span
 	const int w = 20;
 	const int h = 20;
@@ -883,18 +889,59 @@ void bits::init_calc()
 	LAYOUT(x, y, w, h)					// x, y, horiz-span, vertical-span
 	Twidget *tw = new Twidget;
 	tw->objName = "calc";
+	tw->sizes	<< QSize(w, h);
+	tw->grouped = true;
 	tw->objText << "&&"  << "|"  << "^"
 				<< "+"           << "-"
 				<< "*"   << "/"  << "%";
-	tw->sizes	<< QSize(w, h);
 	tw->layout	<< POINT(0, 0) << POINT(1, 0) << POINT(2, 0)
 				<< POINT(0, 1)                << POINT(2, 1)
 				<< POINT(0, 2) << POINT(1, 2) << POINT(2, 2);
 
-        tw->grouped = true;
-        pCalc = new ControlGroup <QPushButton>(tw, ui->centralWidget);
+	pCalc = new ControlGroup <QPushButton>(tw, ui->centralWidget);
 	connect(tw->buttonGroup, SIGNAL(buttonClicked(int)),
 			this, SLOT(onCalc(int)));
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::init_format
+//
+// The formatter takes input from a QComboBox and uses it to format one of the
+// HexEdit comboboxes according to user input. The format utility allows the
+// user to separate data into bitfields for easier analysis.
+//
+// This utility consists of three readio buttons to connect one of the three
+// HexEdit comboboxes to the formatter, the combo box, where the user can
+// enter the desired format, and a pushbutton to execute.
+*/
+void bits::init_format()
+{
+	const int x = X_START + 100;		// x-coordinate
+	const int y = Y_START + 34;			// y-coordinate
+	const int inc = HE_W + HE_SKIP_W;	// horizontal span
+	LAYOUT(x,y,inc,0)
+
+	const int w = 100;
+	const int h = 20;
+
+	Twidget *tw = new Twidget;
+	tw->objName = "formatter";
+	tw->grouped = true;
+	tw->objText << "Formatter";
+	tw->sizes	<< QSize(w, h);
+	tw->layout	<< POINT(0, 0) << POINT(1, 0) << POINT(2, 0);
+
+	pConnectFormat = new ControlGroup <QRadioButton>(tw, ui->centralWidget);
+
+	// Set the default formatter connection to the left hex window, or
+	// "left operand". No need to map a slot for any change in checked
+	// status, because the "Format" pushbutton will determine which of
+	// the "Formatter" radio buttons is checked.
+	//
+	pConnectFormat->widgetList[hex_left]->setChecked(true);
+
+
 }
 
 /*/////////////////////////////////////////////////////////////////////////////

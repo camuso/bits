@@ -36,6 +36,7 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	tw->sizes   << QSize(shlw, shlh);
 	tw->layout  << QPoint(shlx, shly) << QPoint(shrx, shly);
 	tw->grouped = true;
+	quint64	getBits();
 	pShiftButtons = new ControlGroup <QPushButton>(tw, parent);
 
 	// Create the Rotate checkbox
@@ -50,6 +51,15 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	chkRotate->setGeometry(crx, cry, crw, crh);
 	chkRotate->setText("Rotate");
 	chkRotate->show();
+
+	// Allow the shift buttons to autorepeat.
+	//
+	pShiftButtons->widgetList[0]->setAutoRepeat(true);
+	pShiftButtons->widgetList[1]->setAutoRepeat(true);
+	pShiftButtons->widgetList[0]->setAutoRepeatDelay(500);
+	pShiftButtons->widgetList[1]->setAutoRepeatDelay(500);
+	pShiftButtons->widgetList[0]->setAutoRepeatInterval(70);
+	pShiftButtons->widgetList[1]->setAutoRepeatDelay(70);
 
 	// Connect the signal from the shiftbuttons to the "shift" signal in this
 	// class.
