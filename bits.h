@@ -21,8 +21,11 @@
 #include <QtCore/QTextStream>
 #include <QtGui>
 #include <QtDesigner/QDesignerCustomWidgetInterface>
+#include <string>		// sometimes good old C code has the best solution
 
-//#include "debug.h"
+#include <QtGlobal>		// qPrintable() - be careful with this
+#include <QtDebug>		// qDebug()
+
 #include "bits.ui.h"
 #include "BitButton.h"
 #include "hexedit.h"
@@ -60,6 +63,8 @@
 //
 #define POINT(c, r) QPoint((_Lx + (c * _Lhs)), (_Ly + (r * _Lvs)))
 
+#define Bits2HexDigits(x) ((x/4) + ((x%4 > 0) ? 1 : 0))
+
 // Message types, each associated with its own color.
 //
 enum {msg_info, msg_notify, msg_alert};
@@ -94,7 +99,7 @@ private	slots:
 	void onInvert(int);
 	void onShift(int);
 	void onCalc (int);
-	void onFormat(int);
+	void onFormat();
 
 private:
 	Ui::bits *ui;
@@ -126,6 +131,8 @@ private:
 	ShiftOpGroup *shiftOp;
 	ControlGroup <QPushButton> *pCalc;
 	ControlGroup <QRadioButton> *pConnectFormat;
+	QComboBox *fmtBox;
+	QPushButton *fmtCmd;
 };
 
 #endif // BITS_H

@@ -389,9 +389,66 @@ void bits::onInvert(int index)
 	showDecimals(hexVal);
 }
 
-void bits::onFormat(int)
+/*/////////////////////////////////////////////////////////////////////////////
+//
+// bits::onFormat - invert the value in the hex box
+//
+// . See which HexEdit box is connected to the formatter by reading the
+//   buttonGroup checked() id in the pConnectFormat ControlGroup.
+// . Format the contents of that HexEdit box according to the format
+//   specified in the fmtBox (Format ComboBox) and send it to the
+//   result HexEdit box.
+// . The format defines bit fields delimited by periods. so that,
+//   4.5.3.4 defines a 16-bit number to be displayed as bitfields
+//   of 4, 5, 3, and 4 bits, separated by periods.
+//
+*/
+void bits::onFormat()
 {
+	QString fmtStr = fmtBox->currentText();
+	Twidget *tw = pConnectFormat->getTwidget();
 
+	int fmtIndex = tw->buttonGroup->checkedId();
+	quint64 hexVal = ui->hexedit[fmtIndex]->getHexVal();
+
+	// Tokenize the Field Widths from the fmtStr
+	//
+	QList<QString> fwStrList = fmtStr.split(QChar('.'), QString::SkipEmptyParts);
+
+	// Now we have a list of strings that represent the desired field widths.
+	// . Iterate backwards through this list, converting each field width
+	//   string to an integer.
+	// . Create a bitmask from the field width and extract the numeric data
+	//   from the HexVal.
+	// . Convert the extracted numeric data to a hex string and prepend it
+	//   to the results QString to build the string that will ultimately be
+	//   displayed. Prepend a period to each field.
+	// . Shift the HexVal by the field width to put the next bits into position.
+	//   If HexVal is zero after the shift, then exit the loop, we're done.
+	//
+	QString results;
+	QListIterator<QString> i(fwStrList);
+	i.toBack();
+	while (i.hasPrevious())
+	{
+		bool ok;
+		QString fwStr = i.previous();
+		int fldWid = fwStr.toInt(&ok);
+		int hexWid = Bits2HexDigits(fldWid);
+
+		quint64 bitMask = (((quint64) 1) << fldWid) - 1;
+		quint64 fldData = hexVal & bitMask;
+		QString hexFld = QString("%1").arg((quint64)fldData, hexWid, 16, QChar('0'));
+
+		hexFld.prepend(QChar('.'));
+		results.prepend(hexFld);
+
+		hexVal >>= fldWid;
+		if (hexVal == 0)
+			break;
+	}
+	results.remove(0,1);	// don't need the leading dot for first field
+	ui->hexedit[hex_result]->setEditText(results);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -773,6 +830,11 @@ void bits::init_heArray()
 	//
 	ui->hexedit[hex_result]->lineEdit()->setReadOnly(true);
 
+	// Allow the result box to take any format, so we can display formatted
+	// bit fields.
+	//
+	ui->hexedit[hex_result]->lineEdit()->setInputMask("");
+
 	// Set the Right HexEdit to gain focus from a tab pressed in the
 	// Left HexEdit. From there, it will proceed to the Bit Buttons.
 	//
@@ -917,13 +979,13 @@ void bits::init_calc()
 */
 void bits::init_format()
 {
-	const int x = X_START + 100;		// x-coordinate
-	const int y = Y_START + 34;			// y-coordinate
-	const int inc = HE_W + HE_SKIP_W;	// horizontal span
+	int x = X_START + 100;		// x-coordinate
+	int y = Y_START + 34;			// y-coordinate
+	int inc = HE_W + HE_SKIP_W;	// horizontal span
 	LAYOUT(x,y,inc,0)
 
-	const int w = 100;
-	const int h = 20;
+	int w = 100;
+	int h = 20;
 
 	Twidget *tw = new Twidget;
 	tw->objName = "formatter";
@@ -941,7 +1003,21 @@ void bits::init_format()
 	//
 	pConnectFormat->widgetList[hex_left]->setChecked(true);
 
+	x = X_START + 2*HE_W + 2*HE_SKIP_W;
+	y = Y_START + 75;
+	w = HE_W;
+	h = HE_H;
+	fmtBox = new QComboBox(ui->centralWidget);
+	fmtBox->setGeometry(QRect(x, y, w, h));
+	fmtBox->setEditable(true);
+	fmtBox->setInsertPolicy(QComboBox::InsertAtTop);
 
+	fmtCmd = new QPushButton(ui->centralWidget);
+	y += 34;
+	fmtCmd->setGeometry(QRect(x, y, w, h));
+	fmtCmd->setText(QString("&Format"));
+
+	connect(fmtCmd, SIGNAL(clicked()), this, SLOT(onFormat()));
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -1031,7 +1107,20 @@ void bits::setAppStyles()
 		"QLineEdit {"
 			"color: black; "
 			"border-style:inset;border-width:2px;"
-			"border-radius4px;border-color:gray; }";
+			"border-radius4px;border-color:gray; }"
+
+		"QComboBox {"
+			"color: aqua; "
+			"background-color: black; "
+			"border-style:inset;border-width:2px;"
+			"border-radius4px;border-color:gray; }"
+
+		"QTextEdit {"
+			"color: aqua; "
+			"background-color: black; "
+			"border-style:inset;border-width:2px;"
+			"border-radius4px;border-color:gray; }"
+			;
 
 	setStyleSheet(style);
 }
