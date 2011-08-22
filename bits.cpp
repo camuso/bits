@@ -290,6 +290,7 @@ void bits::onCalc(int index)
 	case calc_div: res = op1 / op2; break;
 	case calc_mod: res = op1 % op2; break;
 	}
+
 	ui->hexedit[hex_result]->updateHexEdit(res);
 
 	int bbConnectIndex = ui->bbConnectGroup->checkedId();
@@ -406,10 +407,12 @@ void bits::onInvert(int index)
 void bits::onFormat()
 {
 	QString fmtStr = fmtBox->currentText();
+
 	Twidget *tw = pConnectFormat->getTwidget();
 
 	int fmtIndex = tw->buttonGroup->checkedId();
 	quint64 hexVal = ui->hexedit[fmtIndex]->getHexVal();
+	int binDigits = ui->hexedit[fmtIndex]->hexBitField->getCurrentBinDigits();
 
 	// Tokenize the Field Widths from the fmtStr
 	//
@@ -428,12 +431,27 @@ void bits::onFormat()
 	//
 	QString results;
 	QListIterator<QString> i(fwStrList);
+	int bitCount = binDigits;
 	i.toBack();
 	while (i.hasPrevious())
 	{
 		bool ok;
 		QString fwStr = i.previous();
 		int fldWid = fwStr.toInt(&ok);
+
+		// Check for the validity of the format string.
+		//
+		if ((ok != true) || (fldWid > binDigits))
+		{
+			QString invalidMsg = fmtStr % " : is not a valid format string.\n";
+			sendMessage(invalidMsg, msg_notify);
+			return;
+		}
+
+		// Limit the field width to the remaining bits that have not been
+		// formatted into fields yet.
+		//
+		fldWid = fldWid > bitCount ? bitCount : fldWid;
 		int hexWid = Bits2HexDigits(fldWid);
 
 		quint64 bitMask = (((quint64) 1) << fldWid) - 1;
@@ -443,12 +461,36 @@ void bits::onFormat()
 		hexFld.prepend(QChar('.'));
 		results.prepend(hexFld);
 
-		hexVal >>= fldWid;
-		if (hexVal == 0)
+		// If we've done all the bits possible for the current bit size,
+		// then quit now.
+		//
+		bitCount -= fldWid;
+		if (bitCount <= 0)
 			break;
+
+		// Get the next bits in place.
+		//
+		hexVal >>= fldWid;
 	}
+
+	// Clear the inputMask before sending the format to the results box.
+	// It won't display properly otherwise.
+	//
+	ui->hexedit[hex_result]->lineEdit()->setInputMask("");
+
 	results.remove(0,1);	// don't need the leading dot for first field
 	ui->hexedit[hex_result]->setEditText(results);
+
+	// Set the inputMask again so that all other results will show
+	// formatted correctly.
+	//
+	QString mask = ui->hexedit[hex_result]->hexBitField->getCurrentBitMask();
+	ui->hexedit[hex_result]->lineEdit()->setInputMask(mask);
+
+	// Save the format string in the fmtBox list.
+	//
+	if (fmtStr != fmtBox->itemText(0))
+			fmtBox->insertItem(0, fmtStr);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -829,11 +871,6 @@ void bits::init_heArray()
 	// function and apply that attribute to our Result HexEdit Box.
 	//
 	ui->hexedit[hex_result]->lineEdit()->setReadOnly(true);
-
-	// Allow the result box to take any format, so we can display formatted
-	// bit fields.
-	//
-	ui->hexedit[hex_result]->lineEdit()->setInputMask("");
 
 	// Set the Right HexEdit to gain focus from a tab pressed in the
 	// Left HexEdit. From there, it will proceed to the Bit Buttons.
