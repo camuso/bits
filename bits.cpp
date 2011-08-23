@@ -408,6 +408,12 @@ void bits::onFormat()
 {
 	QString fmtStr = fmtBox->currentText();
 
+	// If there's nothing in the format string, then just return. Nothing
+	// to do.
+	//
+	if ((fmtStr == "") || (fmtStr == "0"))
+		return;
+
 	Twidget *tw = pConnectFormat->getTwidget();
 
 	int fmtIndex = tw->buttonGroup->checkedId();
@@ -441,7 +447,7 @@ void bits::onFormat()
 
 		// Check for the validity of the format string.
 		//
-		if ((ok != true) || (fldWid > binDigits))
+		if ((ok != true) || (fldWid > binDigits) || (fldWid <= 0))
 		{
 			QString invalidMsg = fmtStr % " : is not a valid format string.\n";
 			sendMessage(invalidMsg, msg_notify);
@@ -473,24 +479,25 @@ void bits::onFormat()
 		hexVal >>= fldWid;
 	}
 
+	results.remove(0,1);	// don't need the leading dot for first field
+
 	// Clear the inputMask before sending the format to the results box.
 	// It won't display properly otherwise.
 	//
 	ui->hexedit[hex_result]->lineEdit()->setInputMask("");
 
-	results.remove(0,1);	// don't need the leading dot for first field
 	ui->hexedit[hex_result]->setEditText(results);
-
-	// Set the inputMask again so that all other results will show
-	// formatted correctly.
-	//
-	QString mask = ui->hexedit[hex_result]->hexBitField->getCurrentBitMask();
-	ui->hexedit[hex_result]->lineEdit()->setInputMask(mask);
 
 	// Save the format string in the fmtBox list.
 	//
 	if (fmtStr != fmtBox->itemText(0))
 			fmtBox->insertItem(0, fmtStr);
+
+	// Set the inputMask again so that all other results will be shown
+	// formatted correctly.
+	//
+	//QString mask = ui->hexedit[hex_result]->hexBitField->getCurrentBitMask();
+	//ui->hexedit[hex_result]->lineEdit()->setInputMask(mask);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -871,6 +878,7 @@ void bits::init_heArray()
 	// function and apply that attribute to our Result HexEdit Box.
 	//
 	ui->hexedit[hex_result]->lineEdit()->setReadOnly(true);
+	ui->hexedit[hex_result]->lineEdit()->setInputMask("");
 
 	// Set the Right HexEdit to gain focus from a tab pressed in the
 	// Left HexEdit. From there, it will proceed to the Bit Buttons.
@@ -1048,6 +1056,7 @@ void bits::init_format()
 	fmtBox->setGeometry(QRect(x, y, w, h));
 	fmtBox->setEditable(true);
 	fmtBox->setInsertPolicy(QComboBox::InsertAtTop);
+	fmtBox->setMaxCount(32);
 
 	fmtCmd = new QPushButton(ui->centralWidget);
 	y += 34;
@@ -1055,6 +1064,7 @@ void bits::init_format()
 	fmtCmd->setText(QString("&Format"));
 
 	connect(fmtCmd, SIGNAL(clicked()), this, SLOT(onFormat()));
+	connect(fmtBox, SIGNAL(activated(int)), this, SLOT(onFormat()));
 }
 
 /*/////////////////////////////////////////////////////////////////////////////

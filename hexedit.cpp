@@ -20,6 +20,7 @@ HexEdit::HexEdit(int hexenum, QWidget *parent, bitfield_t bf) :
 
 	this->setInsertPolicy(QComboBox::InsertAtTop);
 	this->setEditable(true);
+	this->setMaxCount(32);
 	this->hexBitField->setBitField(bf);
 	this->lineEdit()->setInputMask(hexBitField->getCurrentBitMask());
 
