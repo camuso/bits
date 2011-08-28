@@ -392,6 +392,17 @@ void bits::onInvert(int index)
 
 /*/////////////////////////////////////////////////////////////////////////////
 //
+// onFmtClr() - simply clear out the Format Combo box. When the box is clear,
+//              no formatting will be done.
+//
+*/
+void bits::onFmtClr()
+{
+	fmtBox->setEditText("");
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+//
 // bits::onFormat - invert the value in the hex box
 //
 // . See which HexEdit box is connected to the formatter by reading the
@@ -408,17 +419,19 @@ void bits::onFormat()
 {
 	QString fmtStr = fmtBox->currentText();
 
-	// If there's nothing in the format string, then just return. Nothing
-	// to do.
-	//
-	if ((fmtStr == "") || (fmtStr == "0"))
-		return;
-
 	Twidget *tw = pConnectFormat->getTwidget();
 
 	int fmtIndex = tw->buttonGroup->checkedId();
 	quint64 hexVal = ui->hexedit[fmtIndex]->getHexVal();
 	int binDigits = ui->hexedit[fmtIndex]->hexBitField->getCurrentBinDigits();
+
+	// If there's nothing in the format string, then use the default format.
+	//
+	if ((fmtStr == "") || (fmtStr == "0"))
+	{
+		ui->hexedit[hex_result]->updateHexEdit(hexVal);
+		return;
+	}
 
 	// Tokenize the Field Widths from the fmtStr
 	//
@@ -426,7 +439,7 @@ void bits::onFormat()
 
 	// Now we have a list of strings that represent the desired field widths.
 	// . Iterate backwards through this list, converting each field width
-	//   string to an integer.
+	//   string to an integer. Using java-style iterator provided by QtSDK.
 	// . Create a bitmask from the field width and extract the numeric data
 	//   from the HexVal.
 	// . Convert the extracted numeric data to a hex string and prepend it
@@ -445,7 +458,7 @@ void bits::onFormat()
 		QString fwStr = i.previous();
 		int fldWid = fwStr.toInt(&ok);
 
-		// Check for the validity of the format string.
+		// Check for the validity of the field string.
 		//
 		if ((ok != true) || (fldWid > binDigits) || (fldWid <= 0))
 		{
@@ -879,6 +892,7 @@ void bits::init_heArray()
 	//
 	ui->hexedit[hex_result]->lineEdit()->setReadOnly(true);
 	ui->hexedit[hex_result]->lineEdit()->setInputMask("");
+	ui->hexedit[hex_result]->updateHexEditBitField(bit_32);
 
 	// Set the Right HexEdit to gain focus from a tab pressed in the
 	// Left HexEdit. From there, it will proceed to the Bit Buttons.
@@ -1060,11 +1074,17 @@ void bits::init_format()
 
 	fmtCmd = new QPushButton(ui->centralWidget);
 	y += 34;
+	w = w/2 - 1;
 	fmtCmd->setGeometry(QRect(x, y, w, h));
 	fmtCmd->setText(QString("&Format"));
-
 	connect(fmtCmd, SIGNAL(clicked()), this, SLOT(onFormat()));
 	connect(fmtBox, SIGNAL(activated(int)), this, SLOT(onFormat()));
+
+	fmtClr = new QPushButton(ui->centralWidget);
+	x += w + 1;
+	fmtClr->setGeometry(QRect(x, y, w, h));
+	fmtClr->setText(QString("&Clear"));
+	connect(fmtClr, SIGNAL(clicked()), this, SLOT(onFmtClr()));
 }
 
 /*/////////////////////////////////////////////////////////////////////////////

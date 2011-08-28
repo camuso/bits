@@ -100,6 +100,7 @@ private	slots:
 	void onShift(int);
 	void onCalc (int);
 	void onFormat();
+	void onFmtClr();
 
 private:
 	Ui::bits *ui;
@@ -133,6 +134,7 @@ private:
 	ControlGroup <QRadioButton> *pConnectFormat;
 	QComboBox *fmtBox;
 	QPushButton *fmtCmd;
+	QPushButton *fmtClr;
 };
 
 #endif // BITS_H
