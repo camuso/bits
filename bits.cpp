@@ -253,6 +253,11 @@ void bits::onShift(int index)
 	if (shiftConnectIndex == bbConnectIndex)
 		updateBits(shiftConnectIndex);
 
+
+	// Format the result if there's a format
+	//
+	onFormat();
+
 	//QString dirStr = index == 0 ? "Left by " : "Right by ";
 	//QString msg = QString("Shifted " % dirStr % qsShiftVal);
 	//sendMessage(msg, msg_notify);
@@ -297,6 +302,13 @@ void bits::onCalc(int index)
 	if(bbConnectIndex == hex_result)
 		this->updateBits(hex_result);
 
+	// Format the result box if it's connected to the formatter
+	//
+	Twidget *tw = pConnectFormat->getTwidget();
+	int fmtIndex = tw->buttonGroup->checkedId();
+	if (fmtIndex == hex_result)
+		onFormat();
+
 	this->showDecimals(res);
 }
 
@@ -310,6 +322,8 @@ void bits::onCalc(int index)
 */
 void bits::keyPressEvent(QKeyEvent *event)
 {
+	//int key = (int)event->key();
+	//qDebug() << "key: " << key;
 	switch (event->key()) {
 	case Qt::Key_Left: onShift(0); break;
 	case Qt::Key_Right: onShift(1); break;
@@ -387,6 +401,11 @@ void bits::onInvert(int index)
 	int bbConnectIndex = ui->bbConnectGroup->checkedId();
 	if(index == bbConnectIndex)
 		updateBits(index);
+
+	// Format the combo box if it's connected to the formatter
+	//
+	onFormat();
+
 	showDecimals(hexVal);
 }
 
@@ -418,10 +437,16 @@ void bits::onFmtClr()
 void bits::onFormat()
 {
 	QString fmtStr = fmtBox->currentText();
-
 	Twidget *tw = pConnectFormat->getTwidget();
-
 	int fmtIndex = tw->buttonGroup->checkedId();
+
+	// TO DO:
+	// If the fmtIndex == hex_result, then we have to do some thing different.
+	// than just grab the text. The format stuff must be subclassed so we can
+	// maintain at least a copy of the displayed/formatted value as a quint64.
+	// The difficulty is that converting the formatted text back to a quint64
+	// is problematic because the number has been broken up into fields.
+
 	quint64 hexVal = ui->hexedit[fmtIndex]->getHexVal();
 	int binDigits = ui->hexedit[fmtIndex]->hexBitField->getCurrentBinDigits();
 

@@ -131,7 +131,7 @@ void HexEdit::updateHexEdit(quint64 hexVal)
 
 	if(hexVal != prevHexVal)
 	{
-		this->insertItem(0, hexStr);
+		this->insertItem(1, hexStr);
 		prevHexVal = hexVal;
 		prevHexStr = hexStr;
 	}
