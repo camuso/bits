@@ -56,10 +56,6 @@ ShiftOpGroup::ShiftOpGroup(QPoint *start, QWidget *parent) :
 	//
 	pShiftButtons->widgetList[0]->setAutoRepeat(true);
 	pShiftButtons->widgetList[1]->setAutoRepeat(true);
-	pShiftButtons->widgetList[0]->setAutoRepeatDelay(700);
-	pShiftButtons->widgetList[1]->setAutoRepeatDelay(700);
-	pShiftButtons->widgetList[0]->setAutoRepeatInterval(110);
-	pShiftButtons->widgetList[1]->setAutoRepeatDelay(110);
 
 	// Connect the signal from the shiftbuttons to the "shift" signal in this
 	// class.
