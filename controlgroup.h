@@ -4,6 +4,7 @@
 //#include <QtCore>
 //#include <QtGui>
 #include <QtCore/QSignalMapper>
+#include <QtCore/QStringBuilder>
 #include <QtGui/QWidget>
 #include <QtGui/QRadioButton>
 #include <QtGui/QButtonGroup>
