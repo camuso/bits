@@ -1,7 +1,7 @@
 #ifndef FORMATGROUP_H
 #define FORMATGROUP_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 class FormatGroup : public QWidget
 {

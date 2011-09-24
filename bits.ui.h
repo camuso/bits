@@ -25,8 +25,8 @@
 **
 ********************************************************************************/
 
-#ifndef	UI_BITS_H
-#define	UI_BITS_H
+#ifndef UI_BITS_H
+#define UI_BITS_H
 
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
@@ -36,116 +36,116 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
+#include <QtGui/QRadioButton>
 #include <QtGui/QStatusBar>
 #include <QtGui/QTextEdit>
 #include <QtGui/QToolBar>
 #include <QtGui/QWidget>
-#include <QtGui/QRadioButton>
 
 #include "BitButton.h"
 #include "hexedit.h"
 #include "controlgroup.h"
 #include "shiftop.h"
 
-#define QT_USE_FAST_CONCATENATION	// use % instead of + for
-									// string concatenation
+#define QT_USE_FAST_CONCATENATION   // use % instead of + for
+                                    // string concatenation
 
-// Main	Window Geometry
+// Main Window Geometry
 // ====================
-#define	MAINWINDOW_W 716
-#define	MAINWINDOW_H 360
-//#define	MAINWINDOW_H 260
+#define MAINWINDOW_W 716
+#define MAINWINDOW_H 360
+//#define   MAINWINDOW_H 260
 
-#define INIT_BITSIZE 32		// The default bit count
+#define INIT_BITSIZE 32     // The default bit count
 
 #define X_START 30
 #define Y_START 30
 
 // BitButton and BitButton Label Geometry
 // ======================================
-#define	BITS 64
-#define	ROWS (BITS/32)
-#define	COLS (BITS/2)
+#define BITS 64
+#define ROWS (BITS/32)
+#define COLS (BITS/2)
 
-#define	BB_X 670
-#define	BB_Y 220
-#define	BB_W 18
-#define	BB_H 22
+#define BB_X 670
+#define BB_Y 220
+#define BB_W 18
+#define BB_H 22
 #define BB_MARGIN 0
 
-#define	NYB_MARGIN 12
-#define	ROW_MARGIN (BB_H + (BB_H / 2))
+#define NYB_MARGIN 12
+#define ROW_MARGIN (BB_H + (BB_H / 2))
 
-#define	BB_LABEL_W BB_W
-#define	BB_LABEL_H BB_H
+#define BB_LABEL_W BB_W
+#define BB_LABEL_H BB_H
 
 // HexEdit Combo Box Geometry
 // ==========================
 
 enum hexedit_t
 {
-	hex_left, hex_right, hex_result, hex_array_size
+    hex_left, hex_right, hex_result, hex_array_size
 };
 
 
-#define	HE_W 200
-#define	HE_H 30
+#define HE_W 200
+#define HE_H 30
 
-#define	HE_LEFT_X X_START
-#define	HE_LEFT_Y Y_START
-#define	HE_SKIP_W 38
+#define HE_LEFT_X X_START
+#define HE_LEFT_Y Y_START
+#define HE_SKIP_W 38
 
 QT_BEGIN_NAMESPACE
 
 class Ui_bits
 {
 public:
-	QWidget	*centralWidget;
-	QTextEdit *messages;
+    QWidget *centralWidget;
+    QTextEdit *messages;
 
-	BitButton *bb[BITS];
-	QLabel *bbLabel[BITS];
-	QFrame *bbFrame;
+    BitButton *bb[BITS];
+    QLabel *bbLabel[BITS];
+    QFrame *bbFrame;
 
-	HexEdit	*hexedit[hex_array_size];
-	QButtonGroup *bbConnectGroup;
-	QButtonGroup *shiftConnectGroup;
+    HexEdit *hexedit[hex_array_size];
+    QButtonGroup *bbConnectGroup;
+    QButtonGroup *shiftConnectGroup;
 
-	QMenuBar *menuBar;
-	//QToolBar *mainToolBar;
-	//QStatusBar *statusBar;
+    QMenuBar *menuBar;
+    //QToolBar *mainToolBar;
+    //QStatusBar *statusBar;
 
-	void setupUi(QMainWindow *bits)
-	{
-		if (bits->objectName().isEmpty())
-			bits->setObjectName(QString::fromUtf8("bits"));
-		bits->resize(MAINWINDOW_W, MAINWINDOW_H);
+    void setupUi(QMainWindow *bits)
+    {
+        if (bits->objectName().isEmpty())
+            bits->setObjectName(QString::fromUtf8("bits"));
+        bits->resize(MAINWINDOW_W, MAINWINDOW_H);
 
-		centralWidget =	new	QWidget(bits);
-		centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
+        centralWidget = new QWidget(bits);
+        centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
 
-		bits->setCentralWidget(centralWidget);
+        bits->setCentralWidget(centralWidget);
 
-		menuBar	= new QMenuBar(bits);
-		menuBar->setObjectName(QString::fromUtf8("menuBar"));
-		menuBar->setGeometry(QRect(0, 0, 760, 20));
-		bits->setMenuBar(menuBar);
+        menuBar = new QMenuBar(bits);
+        menuBar->setObjectName(QString::fromUtf8("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 760, 20));
+        bits->setMenuBar(menuBar);
 #if 0
-		mainToolBar	= new QToolBar(bits);
-		mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
-		bits->addToolBar(Qt::TopToolBarArea, mainToolBar);
+        mainToolBar = new QToolBar(bits);
+        mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
+        bits->addToolBar(Qt::TopToolBarArea, mainToolBar);
 
-		statusBar =	new	QStatusBar(bits);
-		statusBar->setObjectName(QString::fromUtf8("statusBar"));
-		bits->setStatusBar(statusBar);
+        statusBar = new QStatusBar(bits);
+        statusBar->setObjectName(QString::fromUtf8("statusBar"));
+        bits->setStatusBar(statusBar);
 #endif
-		QMetaObject::connectSlotsByName(bits);
+        QMetaObject::connectSlotsByName(bits);
 
-	} // setupUi
+    } // setupUi
 };
 
 namespace Ui {
-	class bits:	public Ui_bits {};
+    class bits: public Ui_bits {};
 } // namespace Ui
 
 QT_END_NAMESPACE

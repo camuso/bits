@@ -1,34 +1,35 @@
-#ifndef	BITBUTTON_H
-#define	BITBUTTON_H
+#ifndef BITBUTTON_H
+#define BITBUTTON_H
 
-#include <QtCore>
-#include <QtGui>
+#include <QtGui/QFrame>
+#include <QtGui/QPushButton>
+#include <QtGui/QWidget>
 //#include <QtDesigner/QDesignerCustomWidgetInterface>
 
-class BitButton	: public QPushButton
+class BitButton : public QPushButton
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	BitButton(int number, QWidget *parent);
-	void bbToggle();
+    BitButton(int number, QWidget *parent);
+    void bbToggle();
 
-	int	bbId;
-	int	bbState;
-	void setState(int state);
+    int bbId;
+    int bbState;
+    void setState(int state);
 
 signals:
-	void bbClicked();
+    void bbClicked();
 
-private	slots:
+private slots:
 
 private:
-	QString	bbStyle[2];
-	QFrame *bbFrame;
-	QColor foreground;
-	QColor background;
-	QColor highlight;
-	QColor HighText;
-	QList <QColor> bbColors;
+    QString bbStyle[2];
+    QFrame *bbFrame;
+    QColor foreground;
+    QColor background;
+    QColor highlight;
+    QColor HighText;
+    QList <QColor> bbColors;
 };
 
 

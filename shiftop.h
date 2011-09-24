@@ -1,36 +1,42 @@
 #ifndef SHIFTOP_H
 #define SHIFTOP_H
 
-#include <QWidget>
-#include <QtCore>
-#include <QtGui>
+//#include <QtCore>
+//#include <QtGui>
+#include <QtCore/QStringBuilder>
 #include <QtDesigner/QDesignerCustomWidgetInterface>
+#include <QtGui/QCheckBox>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <QtGui/QWidget>
 #include "controlgroup.h"
 
 /*////////////////////////////////////////////////////////////////////////////
 */
 class ShiftOpGroup : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit ShiftOpGroup(QPoint *start, QWidget *parent = 0);
+    explicit ShiftOpGroup(QPoint *start, QWidget *parent = 0);
 
-	QLineEdit *shiftBox;
-	ControlGroup <QPushButton> *pShiftButtons;
-	QCheckBox *chkRotate;
+    QLineEdit *shiftBox;
+    ControlGroup <QPushButton> *pShiftButtons;
+    QCheckBox *chkRotate;
 
-	int getCurrentShiftVal();
-	void setCurrentShiftVal(int val);
+    int getCurrentShiftVal();
+    void setCurrentShiftVal(int val);
 
 signals:
-	void shift(int);
+    void shift(int);
 
 public slots:
-	void onTextEdited(QString text);
+    void onTextEdited(QString text);
 
 private:
-	int	currentShiftVal;
-	Twidget *tw;			// Twidget for "<<" and ">>" PushButtons
+    int currentShiftVal;
+    Twidget *tw;            // Twidget for "<<" and ">>" PushButtons
 };
 
 

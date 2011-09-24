@@ -9,10 +9,10 @@ QT       += core gui
 TARGET = bits
 TEMPLATE = app
 
+INCLUDEPATH += c:/QtSDK/desktop/qt/4.7.4/msvc2008/include
 
 SOURCES += main.cpp \
     hexedit.cpp \
-    dummy.cpp \
     bits.cpp \
     bitfield.cpp \
     BitButton.cpp \
@@ -20,7 +20,6 @@ SOURCES += main.cpp \
     formatgroup.cpp
 
 HEADERS  += \
-    dummy.h \
     controlgroup.h \
     bits.ui.h \
     bits.h \

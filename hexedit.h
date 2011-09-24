@@ -1,35 +1,36 @@
-#ifndef	HEXEDIT_H
-#define	HEXEDIT_H
+#ifndef HEXEDIT_H
+#define HEXEDIT_H
 
-#include <QtCore>
 #include <QtCore/QTextStream>
-#include <QtGui>
 #include <QtDesigner/QDesignerCustomWidgetInterface>
-#include <QFontComboBox>
-#include <BitButton.h>
-#include <bitfield.h>
+#include <QtGui/QFontComboBox>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QRadioButton>
+#include "BitButton.h"
+#include "bitfield.h"
 
-class HexEdit :	public QComboBox
+class HexEdit : public QComboBox
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	HexEdit(int hexenum, QWidget *parent = 0, bitfield_t bf = bit_32);
-	~HexEdit();
+    HexEdit(int hexenum, QWidget *parent = 0, bitfield_t bf = bit_32);
+    ~HexEdit();
 
-	bitfield *hexBitField;
-	QLabel *hexeditLabel;
-	QRadioButton *hexbits;
-	QRadioButton *hexshift;
-	int	hexeditId;
+    bitfield *hexBitField;
+    QLabel *hexeditLabel;
+    QRadioButton *hexbits;
+    QRadioButton *hexshift;
+    int hexeditId;
 
-	quint64 hexstr2int(QString& hexstr);
-	QString& int2hexstr(QString &hexStr, quint64 hexVal);
-	void updateHexEdit(quint64 hexVal);
-	void updateHexEditBitField(bitfield_t bf);
-	bool isNewData(quint64 numData);
-	bool isNewData(QString& strData);
-	quint64 getHexVal();
-	quint64 maskHexVal(quint64 hexVal);
+    quint64 hexstr2int(QString& hexstr);
+    QString& int2hexstr(QString &hexStr, quint64 hexVal);
+    void updateHexEdit(quint64 hexVal);
+    void updateHexEditBitField(bitfield_t bf);
+    bool isNewData(quint64 numData);
+    bool isNewData(QString& strData);
+    quint64 getHexVal();
+    quint64 maskHexVal(quint64 hexVal);
 
 signals:
 
@@ -37,8 +38,8 @@ public slots:
 
 private:
 
-	QString prevHexStr;
-	quint64 prevHexVal;
+    QString prevHexStr;
+    quint64 prevHexVal;
 };
 
 #endif // HEXEDIT_H

@@ -1,4 +1,4 @@
-#include <hexedit.h>
+#include "hexedit.h"
 
 /*/////////////////////////////////////////////////////////////////////////////
 //
@@ -6,43 +6,43 @@
 //
 */
 HexEdit::HexEdit(int hexenum, QWidget *parent, bitfield_t bf) :
-	QComboBox(parent)
+    QComboBox(parent)
 {
-	// All the objects owned by this object must be instantiated here.
-	// To expect them to be correctly instantiated outside of this is
-	// dangerous. Ask me how I found that out.
-	//
-	hexeditId =	hexenum;
-	hexBitField = new bitfield(bf);
-	hexeditLabel = new QLabel(parent);
-	hexbits = new QRadioButton(parent);
-	hexshift = new QRadioButton(parent);
+    // All the objects owned by this object must be instantiated here.
+    // To expect them to be correctly instantiated outside of this is
+    // dangerous. Ask me how I found that out.
+    //
+    hexeditId = hexenum;
+    hexBitField = new bitfield(bf);
+    hexeditLabel = new QLabel(parent);
+    hexbits = new QRadioButton(parent);
+    hexshift = new QRadioButton(parent);
 
-	this->setInsertPolicy(QComboBox::InsertAtTop);
-	this->setEditable(true);
-	this->setMaxCount(32);
-	this->hexBitField->setBitField(bf);
-	this->lineEdit()->setInputMask(hexBitField->getCurrentBitMask());
+    this->setInsertPolicy(QComboBox::InsertAtTop);
+    this->setEditable(true);
+    this->setMaxCount(32);
+    this->hexBitField->setBitField(bf);
+    this->lineEdit()->setInputMask(hexBitField->getCurrentBitMask());
 
-	hexbits->setFocusPolicy(Qt::ClickFocus);
-	hexshift->setFocusPolicy(Qt::ClickFocus);
+    hexbits->setFocusPolicy(Qt::ClickFocus);
+    hexshift->setFocusPolicy(Qt::ClickFocus);
 
-	quint64 initVal = 0;
-	prevHexVal = ~initVal;
-	prevHexStr = "";
-	this->updateHexEdit(initVal);
+    quint64 initVal = 0;
+    prevHexVal = ~initVal;
+    prevHexStr = "";
+    this->updateHexEdit(initVal);
 
-	QFont font;
+    QFont font;
 #ifdef Q_WS_WIN
-		font.setPointSize(font.pointSize() + 3);
-		font.setFamily("Lucida Console");
+        font.setPointSize(font.pointSize() + 3);
+        font.setFamily("Lucida Console");
 #endif
 #ifdef Q_WS_X11
-		font.setFamily("Monospace");
-		font.setPointSize(12);
+        font.setFamily("Monospace");
+        font.setPointSize(12);
 #endif
-	this->setFont(font);
-	this->setStyleSheet("color: aqua; background-color: black");
+    this->setFont(font);
+    this->setStyleSheet("color: aqua; background-color: black");
 }
 
 HexEdit::~HexEdit(){}
@@ -64,16 +64,16 @@ HexEdit::~HexEdit(){}
 */
 QString& HexEdit::int2hexstr(QString &hexStr, quint64 hexVal)
 {
-	int width = this->hexBitField->getCurrentHexDigits();
-	int binDigits = this->hexBitField->getCurrentBinDigits();
+    int width = this->hexBitField->getCurrentHexDigits();
+    int binDigits = this->hexBitField->getCurrentBinDigits();
 
-	// Mask off any unused upper bits
-	//
-	hexVal &= 0xFFFFFFFFFFFFFFFF >> (64 - binDigits);
+    // Mask off any unused upper bits
+    //
+    hexVal &= 0xFFFFFFFFFFFFFFFF >> (64 - binDigits);
 
-	hexStr = QString("%1").arg((quint64)hexVal, width, 16, QChar('0'));
-	hexStr = hexStr.toUpper();
-	return hexStr;
+    hexStr = QString("%1").arg((quint64)hexVal, width, 16, QChar('0'));
+    hexStr = hexStr.toUpper();
+    return hexStr;
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -88,17 +88,17 @@ QString& HexEdit::int2hexstr(QString &hexStr, quint64 hexVal)
 */
 quint64 HexEdit::hexstr2int(QString& hexStr)
 {
-	bool ok;
+    bool ok;
 
-	hexStr = hexStr.remove('.');
-	hexStr = hexStr.trimmed();
+    hexStr = hexStr.remove('.');
+    hexStr = hexStr.trimmed();
 
-	// Convert the string to unsigned 64 bit integer, interpreting the
-	// string as base 16 (hexadecimal).
-	//
-	quint64 hexVal = hexStr.toULongLong(&ok, 16);
-	hexVal = maskHexVal(hexVal);
-	return hexVal;
+    // Convert the string to unsigned 64 bit integer, interpreting the
+    // string as base 16 (hexadecimal).
+    //
+    quint64 hexVal = hexStr.toULongLong(&ok, 16);
+    hexVal = maskHexVal(hexVal);
+    return hexVal;
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -123,18 +123,18 @@ quint64 HexEdit::hexstr2int(QString& hexStr)
 */
 void HexEdit::updateHexEdit(quint64 hexVal)
 {
-	QString hexStr;
+    QString hexStr;
 
-	hexVal = maskHexVal(hexVal);
-	hexStr = int2hexstr(hexStr, hexVal);
-	this->setEditText(hexStr);
+    hexVal = maskHexVal(hexVal);
+    hexStr = int2hexstr(hexStr, hexVal);
+    this->setEditText(hexStr);
 
-	if(hexVal != prevHexVal)
-	{
-		this->insertItem(1, hexStr);
-		prevHexVal = hexVal;
-		prevHexStr = hexStr;
-	}
+    if(hexVal != prevHexVal)
+    {
+        this->insertItem(1, hexStr);
+        prevHexVal = hexVal;
+        prevHexStr = hexStr;
+    }
 }
 
 /*/////////////////////////////////////////////////////////////////////////////
@@ -154,26 +154,26 @@ void HexEdit::updateHexEdit(quint64 hexVal)
 */
 void HexEdit::updateHexEditBitField(bitfield_t bf)
 {
-	QString hexStr = this->currentText();
-	this->hexBitField->setBitField(bf);
-	this->lineEdit()->setInputMask(hexBitField->getCurrentBitMask());
-	quint64 hexVal = this->hexstr2int(hexStr);
-	this->updateHexEdit(hexVal);
+    QString hexStr = this->currentText();
+    this->hexBitField->setBitField(bf);
+    this->lineEdit()->setInputMask(hexBitField->getCurrentBitMask());
+    quint64 hexVal = this->hexstr2int(hexStr);
+    this->updateHexEdit(hexVal);
 }
 
 quint64 HexEdit::getHexVal()
 {
-	QString hexStr = this->currentText();
-	quint64 hexVal = this->hexstr2int(hexStr);
-	return hexVal;
+    QString hexStr = this->currentText();
+    quint64 hexVal = this->hexstr2int(hexStr);
+    return hexVal;
 }
 
 quint64 HexEdit::maskHexVal(quint64 hexVal)
 {
-	quint64 bitMask = 0xFFFFFFFFFFFFFFFF;
-	bitMask >>= (64 - this->hexBitField->getCurrentBinDigits());
-	quint64 newVal = hexVal & bitMask;
-	return newVal;
+    quint64 bitMask = 0xFFFFFFFFFFFFFFFF;
+    bitMask >>= (64 - this->hexBitField->getCurrentBinDigits());
+    quint64 newVal = hexVal & bitMask;
+    return newVal;
 }
 
 bool HexEdit::isNewData( quint64 numData) {return( numData != prevHexVal );}
