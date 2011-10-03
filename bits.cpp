@@ -253,10 +253,12 @@ void bits::onShift(int index)
     if (shiftConnectIndex == bbConnectIndex)
         updateBits(shiftConnectIndex);
 
-
-    // Format the result if there's a format
+    // Format the result box if it's connected to the formatter
     //
-    onFormat();
+    Twidget *tw = pConnectFormat->getTwidget();
+    int fmtIndex = tw->buttonGroup->checkedId();
+    if (fmtIndex == hex_result)
+        onFormat();
 
     //QString dirStr = index == 0 ? "Left by " : "Right by ";
     //QString msg = QString("Shifted " % dirStr % qsShiftVal);

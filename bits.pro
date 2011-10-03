@@ -9,7 +9,7 @@ QT       += core gui
 TARGET = bits
 TEMPLATE = app
 
-INCLUDEPATH += c:/QtSDK/desktop/qt/4.7.4/msvc2008/include
+# INCLUDEPATH += c:/QtSDK/desktop/qt/4.7.4/msvc2008/include
 
 SOURCES += main.cpp \
     hexedit.cpp \
