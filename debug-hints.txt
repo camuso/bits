@@ -1,0 +1,110 @@
+For QtSDK debugging in Windows
+==============================
+
+. Download the .net framework v4.0 package
+  http://www.microsoft.com/download/en/details.aspx?id=17851
+
+. Download Windows SDK
+  32-bit: http://www.microsoft.com/whdc/devtools/debugging/installx86.Mspx
+  64-bit: http://www.microsoft.com/whdc/devtools/debugging/install64bit.Mspx
+
+. Restart Qt Creator
+  . When you start debugging the first time, QtCreator will ask for a
+    directory in which to put the symbol cache.
+
+More info here ...
+http://doc.qt.nokia.com/qtcreator-snapshot/creator-debugger-engines.html#setting-the-symbol-server-in-windows
+
+
+Directories and paths
+=====================
+
+If QtCreator says that the QtSDK header files are non-existant when you mouseover
+them, you can add an INCLUDEPATH line to the .pro file (project file).
+
+INCLUDEPATH += c:/QtSDK/desktop/qt/4.7.4/msvc2008/include
+
+You may have to use a different absolute path, depending on where the install
+put the QtSDK directories, and the version of the QtSDK, of course.
+
+Of course, this should not be necessary. I have not yet determined what is
+missing in the QtCreator environment that I have to do this.
+
+Nevertheless, this absolute reference works.
+
+
+Build Directories
+==================
+
+If you're having a problem, close the project, delete the .pro.user file,
+and re-open the project.
+
+You will be prompted for Configurations. The default is "none". Choose
+the first option.
+
+QtCreator will create very ugly directory names, so it's best if you
+create your own.
+
+Have a directory tree ready.
+
+If your project is named "bits", you will want this directory tree.
+
+bits
+bits-build
+    debug
+    release
+
+It is important that the source and build directories are at the same
+directory level.
+
+Once QtCreator is running and your project is loaded, on the left side of
+the window, you will see a tool bar. Select the "Projects" tool.
+
+At the top of the Projects page, you will see another toolbar named,
+"Desktop"
+
+Select Desktop->Build
+
+In the "Edit Build Configuration" dropdown box, select the "Debug"
+build.
+
+Have the "SHadow BUild" checkbox checked. Shadow builds keep all the
+build stuff in a directory separate from your sources
+
+
+Make sure your "Build Directory" field has the correct directory.
+
+Build Directory: [ c:\code\projects\bitsdir\bits-build ]
+
+Go back to the "Edit Build Configuration" dropdown box, and selec the
+"Release" build.
+
+Make sure your "Build Directory" field has the correct directory.
+
+Build Directory: [ c:\code\projects\bitsdir\bits-build ]
+
+
+Select Desktop->Run
+
+In the deployment dropdown list, select "debug". If it's not there, create
+it by using the "Add" button.
+
+In the "Executable" field, be sertain that you have the correct directory
+for the executable. All directories should be relative to the build
+directory.
+
+Executable:         [ \debug\bits.exe       ]
+
+Working Directory:  [ %{buildDir}           ]
+
+That resolved the build directory problems I had.
+
+
+No Rule to Make Target foo.us nneded by ui_foo.h
+================================================
+
+Try to rerun qmake (Build->Run qmake), or, if that fails, clean the output
+directory and rebuild your project.
+
+Also, for Qt 5+, make sure you have a QT += widgets in your .pro file. Qt5
+moved widgets to separate library.
