@@ -1,5 +1,6 @@
-#include <QtGui/QApplication>
+//#include <QApplication>
 #include "bits.h"
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {

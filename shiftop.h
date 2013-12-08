@@ -3,15 +3,30 @@
 
 //#include <QtCore>
 //#include <QtGui>
-#include <QtCore/QStringBuilder>
-#include <QtDesigner/QDesignerCustomWidgetInterface>
+
+#include <QtGlobal>
+
+#if QT_VERSION < 0x50000
 #include <QtGui/QCheckBox>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtGui/QWidget>
+#endif
+
+#if QT_VERSION >= 0x50000
+#include <QCheckBox>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QWidget>
+#endif
+
 #include "controlgroup.h"
+#include <QtCore/QStringBuilder>
+#include <QtDesigner/QDesignerCustomWidgetInterface>
 
 /*////////////////////////////////////////////////////////////////////////////
 */

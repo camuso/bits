@@ -6,10 +6,13 @@
 
 QT       += core gui
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 TARGET = bits
 TEMPLATE = app
 
 # INCLUDEPATH += c:/QtSDK/desktop/qt/4.7.4/msvc2008/include
+# INCLUDEPATH += c:/Qt/Qt5.1.1/5.1.1/Src/qtbase/include
 
 SOURCES += main.cpp \
     hexedit.cpp \

@@ -5,9 +5,18 @@
 //#include <QtGui>
 #include <QtCore/QSignalMapper>
 #include <QtCore/QStringBuilder>
+
+#if QT_VERSION < 0x50000
 #include <QtGui/QWidget>
 #include <QtGui/QRadioButton>
 #include <QtGui/QButtonGroup>
+#endif
+
+#if QT_VERSION >= 0x50000
+#include <QWidget>
+#include <QRadioButton>
+#include <QButtonGroup>
+#endif
 
 // Debugging headers
 //

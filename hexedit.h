@@ -1,12 +1,24 @@
 #ifndef HEXEDIT_H
 #define HEXEDIT_H
 
-#include <QtCore/QTextStream>
-#include <QtDesigner/QDesignerCustomWidgetInterface>
+#include <QtGlobal>
+
+#if QT_VERSION < 0x50000
 #include <QtGui/QFontComboBox>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QRadioButton>
+#endif
+
+#if QT_VERSION >= 0x50000
+#include <QFontComboBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QRadioButton>
+#endif
+
+#include <QtCore/QTextStream>
+#include <QtDesigner/QDesignerCustomWidgetInterface>
 #include "BitButton.h"
 #include "bitfield.h"
 

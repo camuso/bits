@@ -1221,6 +1221,25 @@ void bits::setAppStyles()
 
 QString getSystem()
 {
+#if QT_VERSION >= 0x50000
+#ifdef Q_OS_LINUX
+return QString("Linux");
+#endif
+
+#ifdef Q_OS_MAC
+return QString("Mac");
+#endif
+
+#ifdef Q_OS_QWS
+return QString("Embedded Linux");
+#endif
+
+#ifdef Q_OS_WIN
+return QString("Windows");
+#endif
+#endif
+
+#if QT_VERSION < 0x50000
 #ifdef Q_WS_X11
 return QString("Linux");
 #endif
@@ -1236,7 +1255,7 @@ return QString("Embedded Linux");
 #ifdef Q_WS_WIN
 return QString("Windows");
 #endif
-
+#endif
 }
 
 #undef Init_1

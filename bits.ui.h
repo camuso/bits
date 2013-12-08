@@ -28,6 +28,7 @@
 #ifndef UI_BITS_H
 #define UI_BITS_H
 
+#if QT_VERSION < 0x50000
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
@@ -41,6 +42,23 @@
 #include <QtGui/QTextEdit>
 #include <QtGui/QToolBar>
 #include <QtGui/QWidget>
+#endif
+
+#if QT_VERSION == 0x50101
+#include <QVariant>
+#include <QAction>
+#include <QApplication>
+#include <QButtonGroup>
+#include <QHeaderView>
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QStatusBar>
+#include <QTextEdit>
+#include <QToolBar>
+#include <QWidget>
+#endif
 
 #include "BitButton.h"
 #include "hexedit.h"

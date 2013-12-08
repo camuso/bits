@@ -1,9 +1,20 @@
 #ifndef BITBUTTON_H
 #define BITBUTTON_H
 
+#include <QtGlobal>
+
+#if QT_VERSION < 0x50000
 #include <QtGui/QFrame>
 #include <QtGui/QPushButton>
 #include <QtGui/QWidget>
+#endif
+
+#if QT_VERSION >= 0x50000
+#include <QFrame>
+#include <QPushButton>
+#include <QWidget>
+#endif
+
 //#include <QtDesigner/QDesignerCustomWidgetInterface>
 
 class BitButton : public QPushButton

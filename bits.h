@@ -16,7 +16,8 @@
 #ifndef BITS_H
 #define BITS_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
+#include <QMainWindow>
 #include <QtCore/QObject>
 #include <QtCore/QTextStream>
 #include <QtDesigner/QDesignerCustomWidgetInterface>
