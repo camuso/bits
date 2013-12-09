@@ -32,5 +32,13 @@ HEADERS  += \
     shiftop.h \
     formatgroup.h
 
-FORMS    += \
-    bits.ui
+#FORMS    += \
+#    bits.ui
+
+debug {
+    DESTDIR = $$PWD/debug
+}
+
+release {
+    DESTDIR = $$PWD/release
+}
