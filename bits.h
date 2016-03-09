@@ -40,12 +40,18 @@
 #ifndef BITS_H
 #define BITS_H
 
+#include <QtGlobal>
 #include <QMainWindow>
 #include <QMainWindow>
 #include <QtCore/QObject>
 #include <QtCore/QTextStream>
-#include <QtDesigner/QDesignerCustomWidgetInterface>
 #include <string>           // sometimes good old C code has the best solution
+
+#if QT_VERSION >= 5
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+#else
+#include <QtDesigner/QDesignerCustomWidgetInterface>
+#endif
 
 // Debugging headers
 //

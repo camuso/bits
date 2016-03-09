@@ -32,6 +32,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QRadioButton>
+#include <QtDesigner/QDesignerCustomWidgetInterface>
 #endif
 
 #if QT_VERSION >= 0x50000
@@ -39,13 +40,15 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QRadioButton>
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
 #endif
 
 #include <QtCore/QTextStream>
-#include <QtDesigner/QDesignerCustomWidgetInterface>
 #include "BitButton.h"
 #include "bitfield.h"
 
+#define QT_USE_FAST_CONCATENATION   // use % instead of + for
+                                    // string concatenation
 class HexEdit : public QComboBox
 {
     Q_OBJECT

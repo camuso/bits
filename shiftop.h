@@ -37,6 +37,7 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtGui/QWidget>
+#include <QtDesigner/QDesignerCustomWidgetInterface>
 #endif
 
 #if QT_VERSION >= 0x50000
@@ -45,12 +46,12 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QWidget>
+#include <QtWidgets>
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
 #endif
 
 #include "controlgroup.h"
 #include <QtCore/QStringBuilder>
-#include <QtDesigner/QDesignerCustomWidgetInterface>
 
 /*////////////////////////////////////////////////////////////////////////////
 */

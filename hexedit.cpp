@@ -95,8 +95,20 @@ QString& HexEdit::int2hexstr(QString &hexStr, quint64 hexVal)
     //
     hexVal &= 0xFFFFFFFFFFFFFFFF >> (64 - binDigits);
 
+    // See if the hexVal parameter is negative. If so, we will
+    // color the string red.
+    //
+    int bin = this->hexBitField->getCurrentBinDigits();
+    quint64 bitMask = (quint64)1 << (bin - 1);
+    bool negFlag = hexVal & bitMask ? true : false;
+
+    QString redOpen = negFlag ? "<font color=\"Magenta\">" : "";
+    QString redClose = negFlag ? "</font>" : "";
+
     hexStr = QString("%1").arg((quint64)hexVal, width, 16, QChar('0'));
     hexStr = hexStr.toUpper();
+    //hexStr = redOpen + hexStr + redClose;
+
     return hexStr;
 }
 
